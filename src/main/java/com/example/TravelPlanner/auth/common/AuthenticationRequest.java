@@ -1,4 +1,4 @@
-package com.example.bLOG.auth.common;
+package com.example.TravelPlanner.auth.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

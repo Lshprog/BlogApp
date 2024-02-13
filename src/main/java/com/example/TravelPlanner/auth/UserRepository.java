@@ -1,6 +1,6 @@
-package com.example.bLOG.auth;
+package com.example.TravelPlanner.auth;
 
-import com.example.bLOG.auth.entities.User;
+import com.example.TravelPlanner.auth.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

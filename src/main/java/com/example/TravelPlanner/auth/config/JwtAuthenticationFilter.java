@@ -1,4 +1,4 @@
-package com.example.bLOG.auth.config;
+package com.example.TravelPlanner.auth.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

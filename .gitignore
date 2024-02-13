@@ -33,3 +33,6 @@ build/
 .vscode/
 
 .env
+
+### Properties files ###
+src/main/resources/localpostgres.properties

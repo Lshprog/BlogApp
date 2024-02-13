@@ -1,8 +1,8 @@
-package com.example.bLOG.auth;
+package com.example.TravelPlanner.auth;
 
-import com.example.bLOG.auth.common.AuthenticationRequest;
-import com.example.bLOG.auth.common.AuthenticationResponse;
-import com.example.bLOG.auth.common.RegisterRequest;
+import com.example.TravelPlanner.auth.common.AuthenticationRequest;
+import com.example.TravelPlanner.auth.common.AuthenticationResponse;
+import com.example.TravelPlanner.auth.common.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

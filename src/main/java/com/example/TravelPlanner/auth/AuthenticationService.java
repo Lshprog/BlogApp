@@ -1,11 +1,11 @@
-package com.example.bLOG.auth;
+package com.example.TravelPlanner.auth;
 
-import com.example.bLOG.auth.common.AuthenticationRequest;
-import com.example.bLOG.auth.common.AuthenticationResponse;
-import com.example.bLOG.auth.common.RegisterRequest;
-import com.example.bLOG.auth.config.JwtService;
-import com.example.bLOG.auth.entities.Role;
-import com.example.bLOG.auth.entities.User;
+import com.example.TravelPlanner.auth.common.AuthenticationRequest;
+import com.example.TravelPlanner.auth.common.AuthenticationResponse;
+import com.example.TravelPlanner.auth.common.RegisterRequest;
+import com.example.TravelPlanner.auth.config.JwtService;
+import com.example.TravelPlanner.auth.entities.Role;
+import com.example.TravelPlanner.auth.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

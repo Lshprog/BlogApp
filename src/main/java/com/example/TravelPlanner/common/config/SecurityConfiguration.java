@@ -1,7 +1,6 @@
-package com.example.bLOG.common.config;
+package com.example.TravelPlanner.common.config;
 
-import com.example.bLOG.auth.config.JwtAuthenticationFilter;
-import jakarta.servlet.Filter;
+import com.example.TravelPlanner.auth.config.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

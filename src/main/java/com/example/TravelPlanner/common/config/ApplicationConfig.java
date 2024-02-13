@@ -1,6 +1,6 @@
-package com.example.bLOG.common.config;
+package com.example.TravelPlanner.common.config;
 
-import com.example.bLOG.auth.UserRepository;
+import com.example.TravelPlanner.auth.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

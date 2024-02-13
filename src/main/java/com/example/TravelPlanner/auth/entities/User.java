@@ -1,5 +1,7 @@
-package com.example.bLOG.auth.entities;
+package com.example.TravelPlanner.auth.entities;
 
+import com.example.TravelPlanner.travelplanning.entities.UserPlanRoles;
+import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -30,12 +31,12 @@ public class User implements UserDetails {
     @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false, unique = true)
     private UUID id;
 
-    @Column(length = 12, columnDefinition = "varchar(12)", nullable = false, unique = true)
+    @Column(length = 12, columnDefinition = "varchar(20)", nullable = false, unique = true)
     @NotBlank(message = "Username is mandatory")
     private String username;
 
-    @Column(columnDefinition = "varchar(12)", nullable = false, unique = true)
-    @Email()
+    @Column(columnDefinition = "varchar(36)", nullable = false, unique = true)
+    @Email(message = "Must be in email format")
     @NotBlank(message = "Email is mandatory")
     private String email;
 
@@ -47,6 +48,14 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private String profileImageUrl; // connect aws bucket and then save profile pics there
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
+    private List<TravelPlan> travelPlans = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserPlanRoles> userPlanRoles = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
