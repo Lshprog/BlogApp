@@ -32,6 +32,9 @@ public class TravelPlan implements Serializable {
     @Column(name = "join_code")
     private String joinCode;
 
+    @Column(name = "title", nullable = false)
+    private String title;
+
     @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserPlanRoles> userPlanRoles = new HashSet<>();
 }
