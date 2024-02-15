@@ -1,7 +1,7 @@
 package com.example.TravelPlanner.travelplanning.entities;
 
 import com.example.TravelPlanner.auth.entities.User;
-import com.example.TravelPlanner.travelplanning.enums.PlanRole;
+import com.example.TravelPlanner.travelplanning.common.enums.PlanRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

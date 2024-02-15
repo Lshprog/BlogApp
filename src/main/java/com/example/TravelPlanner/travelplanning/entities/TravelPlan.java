@@ -22,7 +22,7 @@ public class TravelPlan implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "travel_plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Place> places = new HashSet<>();
 
     @ManyToOne
@@ -34,8 +34,4 @@ public class TravelPlan implements Serializable {
 
     @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserPlanRoles> userPlanRoles = new HashSet<>();
-
-    //@Column(columnDefinition = "jsonb")
-    //private HashMap<User, Role> usertorole = new HashMap<>();
-    // manually serialize so change to String
 }
