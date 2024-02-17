@@ -4,8 +4,10 @@ import com.example.TravelPlanner.auth.common.AuthenticationRequest;
 import com.example.TravelPlanner.auth.common.AuthenticationResponse;
 import com.example.TravelPlanner.auth.common.RegisterRequest;
 import com.example.TravelPlanner.auth.config.JwtService;
+import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.auth.entities.Role;
 import com.example.TravelPlanner.auth.entities.User;
+import com.example.TravelPlanner.common.utils.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +36,7 @@ public class AuthenticationService {
                 .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(MapperUtil.map(user, CustomUserDetails.class));
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
@@ -50,7 +52,7 @@ public class AuthenticationService {
         if(user.isEmpty()){
             throw new NoSuchElementException();
         }
-        var jwtToken = jwtService.generateToken(user.get());
+        var jwtToken = jwtService.generateToken(MapperUtil.map(user, CustomUserDetails.class));
         return AuthenticationResponse.builder().token(jwtToken).build();
 
     }

@@ -1,5 +1,7 @@
 package com.example.TravelPlanner.auth.config;
 
+import com.example.TravelPlanner.auth.entities.CustomUserDetails;
+import com.example.TravelPlanner.common.utils.MapperUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         username = jwtService.extractUsername(jwt);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = MapperUtil.map(this.userDetailsService.loadUserByUsername(username), CustomUserDetails.class);
             if (jwtService.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails,

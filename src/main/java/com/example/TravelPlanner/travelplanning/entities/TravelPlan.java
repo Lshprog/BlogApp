@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -16,14 +18,13 @@ import java.util.*;
 @NoArgsConstructor
 @Builder
 @Table(name = "travel_plans")
-//@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class TravelPlan implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Place> places = new HashSet<>();
+    private List<Event> events = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -31,6 +32,12 @@ public class TravelPlan implements Serializable {
 
     @Column(name = "join_code")
     private String joinCode;
+
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
     @Column(name = "title", nullable = false)
     private String title;

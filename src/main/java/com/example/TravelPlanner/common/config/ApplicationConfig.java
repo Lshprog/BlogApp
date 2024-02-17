@@ -1,6 +1,9 @@
 package com.example.TravelPlanner.common.config;
 
 import com.example.TravelPlanner.auth.UserRepository;
+import com.example.TravelPlanner.auth.entities.CustomUserDetails;
+import com.example.TravelPlanner.common.utils.MapperUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -22,8 +25,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return username -> MapperUtil.map(repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found")), CustomUserDetails.class);
     }
 
     @Bean
@@ -47,6 +49,11 @@ public class ApplicationConfig {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
 }
