@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+// Dto for the list of travel plans to show on the front page for each user
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -30,5 +30,5 @@ public class EventCreateDTO {
     private PlaceStatus placeStatus;
 
     @NotBlank
-    private Location location;
+    private Location loc;
 }

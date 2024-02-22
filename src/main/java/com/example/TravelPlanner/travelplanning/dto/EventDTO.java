@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+// To show every even on the front page for every travel plan
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

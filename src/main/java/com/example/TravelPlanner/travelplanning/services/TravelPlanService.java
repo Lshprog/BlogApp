@@ -11,9 +11,10 @@ import java.util.UUID;
 public interface TravelPlanService {
 
     List<TravelPlanDTO> listAllTravelPlansByUser(UUID userId);
-    TravelPlan saveNewTravelPlan(TravelPlanCreateDTO travelPlanCreateDTO, User user);
-    void updateTravelPlan(TravelPlanDTO travelPlanDTO, User user);
-    void delete(TravelPlanDTO travelPlanDTO, User user);
-    String generateNewInviteLink(TravelPlanDTO travelPlanDTO, User user);
+    TravelPlan getTravelPlanById(Long planId);
+    TravelPlan saveNewTravelPlan(TravelPlanCreateDTO travelPlanCreateDTO, UUID user);
+    void updateTravelPlan(TravelPlanDTO travelPlanDTO);
+    void delete(TravelPlanDTO travelPlanDTO);
+    String generateNewInviteLink(TravelPlanDTO travelPlanDTO);
 
 }
