@@ -1,14 +1,10 @@
 package com.example.TravelPlanner.auth;
 
-import com.example.TravelPlanner.auth.common.AuthenticationRequest;
-import com.example.TravelPlanner.auth.common.AuthenticationResponse;
-import com.example.TravelPlanner.auth.common.RegisterRequest;
+import com.example.TravelPlanner.auth.common.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -31,4 +27,10 @@ public class AuthController {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
+    @PostMapping("/log-out")
+    public ResponseEntity<LogoutResponse> logout(
+            @RequestHeader("Authorization") String tokenHeader
+    ) {
+        return ResponseEntity.ok(authenticationService.logout(tokenHeader));
+    }
 }

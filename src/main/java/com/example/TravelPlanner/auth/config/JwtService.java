@@ -4,9 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +16,18 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Service
 @PropertySource("classpath:application.properties")
+@RequiredArgsConstructor
 public class JwtService {
 
     @Value("${jwt_secret}")
     String jwtSecret;
+
+    private final RedisTemplate<String, String> redisTemplate;
 
     public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
@@ -71,6 +77,26 @@ public class JwtService {
     private SecretKey getSecretSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(this.jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private long calculateDurationUntilExpiration(Date expiration) {
+        long difference = expiration.getTime() - System.currentTimeMillis();
+        return difference > 0 ? difference / 1000 : 0; // Convert to seconds, ensure non-negative
+    }
+
+
+    public void blacklistToken(String token) {
+        Date expirationDate = extractExpiration(token);
+        long durationInSeconds = calculateDurationUntilExpiration(expirationDate);
+
+        if (durationInSeconds > 0) {
+            redisTemplate.opsForValue().set("BL_" + token, "blacklisted", durationInSeconds, TimeUnit.SECONDS);
+        }
+    }
+
+    public boolean isTokenBlacklisted(String token) {
+        Boolean isBlacklisted = redisTemplate.hasKey("BL_" + token);
+        return Boolean.TRUE.equals(isBlacklisted);
     }
 
 }

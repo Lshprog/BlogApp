@@ -1,12 +1,11 @@
 package com.example.TravelPlanner.auth;
 
-import com.example.TravelPlanner.auth.common.AuthenticationRequest;
-import com.example.TravelPlanner.auth.common.AuthenticationResponse;
-import com.example.TravelPlanner.auth.common.RegisterRequest;
+import com.example.TravelPlanner.auth.common.*;
 import com.example.TravelPlanner.auth.config.JwtService;
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.auth.entities.Role;
 import com.example.TravelPlanner.auth.entities.User;
+import com.example.TravelPlanner.common.exceptions.custom.UserNotFoundException;
 import com.example.TravelPlanner.common.utils.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -50,10 +48,16 @@ public class AuthenticationService {
         );
         Optional<User> user = userRepository.findByUsername(request.getUsername());
         if(user.isEmpty()){
-            throw new NoSuchElementException();
+            throw new UserNotFoundException(request.getUsername());
         }
         var jwtToken = jwtService.generateToken(MapperUtil.map(user, CustomUserDetails.class));
         return AuthenticationResponse.builder().token(jwtToken).build();
 
     }
+    public LogoutResponse logout(String authHeader) {
+        String jwt = authHeader.substring(7);
+        jwtService.blacklistToken(jwt);
+        return LogoutResponse.builder().message("successfully logout").build();
+    }
+
 }
