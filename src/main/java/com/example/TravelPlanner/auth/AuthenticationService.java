@@ -24,6 +24,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final MapperUtil mapperUtil;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
@@ -34,7 +35,7 @@ public class AuthenticationService {
                 .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(MapperUtil.map(user, CustomUserDetails.class));
+        var jwtToken = jwtService.generateToken(mapperUtil.map(user, CustomUserDetails.class));
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
@@ -50,7 +51,7 @@ public class AuthenticationService {
         if(user.isEmpty()){
             throw new UserNotFoundException(request.getUsername());
         }
-        var jwtToken = jwtService.generateToken(MapperUtil.map(user, CustomUserDetails.class));
+        var jwtToken = jwtService.generateToken(mapperUtil.map(user, CustomUserDetails.class));
         return AuthenticationResponse.builder().token(jwtToken).build();
 
     }

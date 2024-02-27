@@ -1,5 +1,6 @@
 package com.example.TravelPlanner.auth.entities;
 
+import com.example.TravelPlanner.travelplanning.entities.Event;
 import com.example.TravelPlanner.travelplanning.entities.UserPlanRoles;
 import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
 import jakarta.persistence.*;
@@ -53,6 +54,9 @@ public class User{
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
     private List<TravelPlan> travelPlans = new ArrayList<>();
+
+    @OneToMany(mappedBy = "creator")
+    private List<Event> events = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private Set<UserPlanRoles> userPlanRoles = new HashSet<>();

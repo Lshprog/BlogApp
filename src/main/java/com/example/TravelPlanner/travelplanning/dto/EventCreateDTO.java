@@ -31,4 +31,6 @@ public class EventCreateDTO {
 
     @NotBlank
     private Location loc;
+
+    private VotingDTO voting;
 }

@@ -3,9 +3,12 @@ package com.example.TravelPlanner.common.config;
 import com.example.TravelPlanner.auth.UserRepository;
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.common.utils.MapperUtil;
+import com.example.TravelPlanner.travelplanning.dto.EventDTO;
+import com.example.TravelPlanner.travelplanning.entities.Event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -26,10 +29,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UserRepository repository;
+    private final MapperUtil mapperUtil;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> MapperUtil.map(repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found")), CustomUserDetails.class);
+        return username -> mapperUtil.map(repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found")), CustomUserDetails.class);
     }
 
     @Bean
@@ -52,7 +56,16 @@ public class ApplicationConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.addMappings(new PropertyMap<Event, EventDTO>() {
+            @Override
+            protected void configure() {
+                map().setCreator(source.getCreator().getUsername());
+            }
+        });
+
+        return modelMapper;
     }
 
     @Bean

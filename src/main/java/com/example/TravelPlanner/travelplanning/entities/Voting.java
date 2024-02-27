@@ -3,7 +3,6 @@ package com.example.TravelPlanner.travelplanning.entities;
 import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.common.pojos.Location;
-import com.example.TravelPlanner.common.utils.MapperUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,8 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "events")
-public class Event implements Serializable {
+@Table(name = "votings")
+public class Voting implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +28,8 @@ public class Event implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User creator;
 
-    @Column(name = "title")
-    private String title;
+    @OneToOne(mappedBy = "voting")
+    private Event event;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -38,23 +37,7 @@ public class Event implements Serializable {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @ManyToOne
-    @JoinColumn(name = "travel_plan_id", referencedColumnName = "id")
-    private TravelPlan travelPlan;
+    @Column(name = "current_votes")
+    private Integer currentVotes;
 
-    @Column(name = "description", columnDefinition = "text")
-    private String description;
-
-    @Enumerated(EnumType.STRING)
-    private PlaceStatus placeStatus;
-
-    @Column(name = "location", columnDefinition = "jsonb")
-    private String location;
-
-    @Transient
-    private Location loc;
-
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "voting_id", referencedColumnName = "id")
-    private Voting voting;
 }

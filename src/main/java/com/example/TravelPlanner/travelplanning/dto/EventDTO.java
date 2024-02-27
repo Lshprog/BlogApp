@@ -17,6 +17,8 @@ public class EventDTO {
 
     private Long id;
 
+    private String creator;
+
     private String title;
 
     private Long travelPlanId;
@@ -30,4 +32,6 @@ public class EventDTO {
     private PlaceStatus placeStatus;
 
     private Location location;
+
+    private VotingDTO voting;
 }

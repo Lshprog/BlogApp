@@ -2,7 +2,6 @@ package com.example.TravelPlanner.travelplanning.services;
 
 import com.example.TravelPlanner.auth.UserRepository;
 import com.example.TravelPlanner.travelplanning.dto.TravelPlanCreateDTO;
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanDTO;
 import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
