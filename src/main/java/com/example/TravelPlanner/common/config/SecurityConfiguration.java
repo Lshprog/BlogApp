@@ -1,6 +1,7 @@
 package com.example.TravelPlanner.common.config;
 
 import com.example.TravelPlanner.auth.config.JwtAuthenticationFilter;
+import com.example.TravelPlanner.common.filters.TravelPlanMembershipFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final TravelPlanMembershipFilter travelPlanMembershipFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -36,8 +38,8 @@ public class SecurityConfiguration {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(travelPlanMembershipFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

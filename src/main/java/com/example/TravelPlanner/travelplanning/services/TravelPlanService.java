@@ -2,6 +2,8 @@ package com.example.TravelPlanner.travelplanning.services;
 
 import com.example.TravelPlanner.travelplanning.dto.TravelPlanCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.TravelPlanDTO;
+import com.example.TravelPlanner.travelplanning.dto.TravelPlanShowDTO;
+import com.example.TravelPlanner.travelplanning.dto.TravelPlanUpdateDTO;
 import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
 import com.example.TravelPlanner.travelplanning.entities.UserPlanRoles;
 
@@ -10,13 +12,14 @@ import java.util.UUID;
 
 public interface TravelPlanService {
 
-    List<TravelPlanDTO> listAllTravelPlansByUser(UUID userId);
+    List<TravelPlanShowDTO> listAllTravelPlansByUser(UUID userId);
     TravelPlanDTO getTravelPlanById(Long planId);
     TravelPlanDTO saveNewTravelPlan(TravelPlanCreateDTO travelPlanCreateDTO, UUID user);
-    void updateTravelPlan(TravelPlanDTO travelPlanDTO);
-    void delete(TravelPlanDTO travelPlanDTO);
-    String generateNewInviteLink(TravelPlanDTO travelPlanDTO);
+    TravelPlanDTO updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, UUID userId);
+    void deleteTravelPlan(Long travelPlanId, UUID userId);
+    String generateNewInviteLink(Long travelPlanId);
     void leaveTravelPlan(TravelPlanDTO travelPlanDTO, UUID userId);
     List<UserPlanRoles> findPlanUsers(TravelPlanDTO travelPlanDTO);
+    TravelPlanDTO joinTravelPlan(String joinCode, UUID userId);
 
 }

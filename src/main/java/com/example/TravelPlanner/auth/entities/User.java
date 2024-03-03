@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -22,8 +23,8 @@ import java.util.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
-public class User{
+@Table(name = "users", indexes = {@Index(name = "idx_username", columnList = "username", unique = true)})
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")

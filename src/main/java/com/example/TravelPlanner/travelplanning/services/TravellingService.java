@@ -2,24 +2,17 @@ package com.example.TravelPlanner.travelplanning.services;
 
 import com.example.TravelPlanner.auth.UserRepository;
 import com.example.TravelPlanner.auth.entities.User;
-import com.example.TravelPlanner.common.exceptions.custom.EventNotFoundException;
-import com.example.TravelPlanner.common.exceptions.custom.TravelPlanNotFoundException;
-import com.example.TravelPlanner.common.exceptions.custom.UserNotFoundException;
+import com.example.TravelPlanner.common.exceptions.custom.*;
 import com.example.TravelPlanner.common.utils.CommonUtils;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.common.enums.PlanRole;
 import com.example.TravelPlanner.travelplanning.common.pojos.Location;
 import com.example.TravelPlanner.travelplanning.dto.*;
-import com.example.TravelPlanner.travelplanning.entities.Event;
-import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
-import com.example.TravelPlanner.travelplanning.entities.UserPlanRoles;
-import com.example.TravelPlanner.travelplanning.entities.Voting;
-import com.example.TravelPlanner.travelplanning.repositories.EventRepository;
-import com.example.TravelPlanner.travelplanning.repositories.TravelPlanRepository;
-import com.example.TravelPlanner.travelplanning.repositories.UserPlanRolesRepository;
+import com.example.TravelPlanner.travelplanning.entities.*;
+import com.example.TravelPlanner.travelplanning.repositories.*;
 import com.example.TravelPlanner.common.utils.MapperUtil;
-import com.example.TravelPlanner.travelplanning.repositories.VotingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,11 +27,12 @@ public class TravellingService implements TravelPlanService, EventService, Votin
     private final UserPlanRolesRepository userPlanRolesRepository;
     private final UserRepository userRepository;
     private final VotingRepository votingRepository;
+    private final VotesRepository votesRepository;
     private final MapperUtil mapperUtil;
 
     @Override
-    public List<TravelPlanDTO> listAllTravelPlansByUser(UUID userId) {
-        return mapperUtil.mapList(travelPlanRepository.findTravelPlansByUserId(userId), TravelPlanDTO.class);
+    public List<TravelPlanShowDTO> listAllTravelPlansByUser(UUID userId) {
+        return mapperUtil.mapList(travelPlanRepository.findTravelPlansByUserId(userId), TravelPlanShowDTO.class);
     }
 
     @Override
@@ -55,6 +49,23 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         return userPlanRolesRepository.findUserPlanRolesByTravelPlan(travelPlanDTO.getId());
     }
 
+    @Override
+    @Transactional
+    public TravelPlanDTO joinTravelPlan(String joinCode, UUID userId) {
+        Optional<TravelPlan> optionalTravelPlan = travelPlanRepository.getTravelPlanByJoinCode(joinCode);
+        if(optionalTravelPlan.isEmpty()){
+            throw new TravelPlanNotFoundException(joinCode);
+        }
+        TravelPlan travelPlan = optionalTravelPlan.get();
+        User user = userRepository.getReferenceById(userId);
+        UserPlanRoles userPlanRoles = new UserPlanRoles();
+        userPlanRoles.setTravelPlan(travelPlan);
+        userPlanRoles.setUser(user);
+        userPlanRoles.setRole(PlanRole.EDITOR);
+        userPlanRolesRepository.save(userPlanRoles);
+        return mapperUtil.map(travelPlan, TravelPlanDTO.class);
+    }
+
     @Transactional
     @Override
     public TravelPlanDTO saveNewTravelPlan(TravelPlanCreateDTO travelPlanCreateDTO, UUID userId) {
@@ -67,7 +78,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Transactional
     @Override
-    public void updateTravelPlan(TravelPlanDTO travelPlanDTO) throws NoSuchElementException {
+    public TravelPlanDTO updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, UUID userId) throws NoSuchElementException {
         Optional<TravelPlan> optionalTravelPlan = travelPlanRepository.findById(travelPlanDTO.getId());
         if (optionalTravelPlan.isEmpty()){
             throw new TravelPlanNotFoundException(travelPlanDTO.getId());
@@ -76,7 +87,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         curTravelPlan.setTitle(travelPlanDTO.getTitle());
         curTravelPlan.setStartDate(travelPlanDTO.getStartDate());
         curTravelPlan.setEndDate(travelPlanDTO.getEndDate());
-        travelPlanRepository.save(curTravelPlan);
+        return mapperUtil.map(travelPlanRepository.save(curTravelPlan), TravelPlanDTO.class);
     }
 
     @Transactional
@@ -88,7 +99,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
             throw new TravelPlanNotFoundException(travelPlanDTO.getId());
         }
         TravelPlan travelPlan = optionalTravelPlan.get();
-        PlanRole planRole = userPlanRolesRepository.findUserPlanRoleByUserAndTravelPlan(user, travelPlan);
+        PlanRole planRole = userPlanRolesRepository.findUserPlanRoleByUserAndTravelPlan(user, travelPlan).get();
         if(planRole == PlanRole.OWNER){
             Optional<UserPlanRoles> optionalUserPlanRoles = userPlanRolesRepository.findUserPlanRolesByTravelPlanAndRole(travelPlan, PlanRole.EDITOR);
             if(optionalUserPlanRoles.isEmpty()){
@@ -106,15 +117,20 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Transactional
     @Override
-    public void delete(TravelPlanDTO travelPlanDTO) {
-        travelPlanRepository.deleteById(travelPlanDTO.getId());
+    public void deleteTravelPlan(Long travelPlanId, UUID userId) {
+        User user = userRepository.getReferenceById(userId);
+        TravelPlan travelPlan = travelPlanRepository.findById(travelPlanId).get();
+        if(!user.getTravelPlans().contains(travelPlan)){
+            throw new NotOwnerException();
+        }
+        travelPlanRepository.deleteById(travelPlanId);
     }
 
     @Transactional
     @Override
-    public String generateNewInviteLink(TravelPlanDTO travelPlanDTO) {
+    public String generateNewInviteLink(Long travelPlanId) {
         String newInviteLink = CommonUtils.generateJoinLink();
-        travelPlanRepository.updateJoinCodeTravelPlan(travelPlanDTO.getId(), newInviteLink);
+        travelPlanRepository.updateJoinCodeTravelPlan(travelPlanId, newInviteLink);
         return newInviteLink;
     }
 
@@ -146,11 +162,11 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Override
     @Transactional
-    public EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, Long planId, UUID userId) {
+    public EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, UUID userId) {
         Event newEvent = mapperUtil.map(eventCreateDTO, Event.class);
-        Optional<TravelPlan> optionalTravelPlan = travelPlanRepository.findById(planId);
+        Optional<TravelPlan> optionalTravelPlan = travelPlanRepository.findById(eventCreateDTO.getTravelPlanId());
         if (optionalTravelPlan.isEmpty()){
-            throw new TravelPlanNotFoundException(planId);
+            throw new TravelPlanNotFoundException(eventCreateDTO.getTravelPlanId());
         }
         newEvent.setTravelPlan(optionalTravelPlan.get());
         setEventLocation(newEvent, eventCreateDTO.getLoc());
@@ -162,7 +178,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Transactional
     @Override
-    public void updateEvent(EventDTO eventDTO) {
+    public EventDTO updateEvent(EventDTO eventDTO) {
         Event event = eventRepository.getReferenceById(eventDTO.getId());
         if(eventDTO.getPlaceStatus() == PlaceStatus.CONCRETE &&
                 (event.getPlaceStatus() == PlaceStatus.SUGGESTED || event.getPlaceStatus() == PlaceStatus.VOTING)) {
@@ -174,22 +190,33 @@ public class TravellingService implements TravelPlanService, EventService, Votin
                     event.getEndTime()
                     );
             event.setPlaceStatus(PlaceStatus.CONCRETE);
-            eventRepository.save(event);
+
         } else {
             event.setPlaceStatus(PlaceStatus.SUGGESTED);
-            eventRepository.save(event);
         }
+        return mapperUtil.map(eventRepository.save(event), EventDTO.class);
     }
 
     @Override
     @Transactional
-    public void delete(EventDTO eventDTO) {
-        eventRepository.deleteById(eventDTO.getId());
+    public void deleteEvent(Long eventId) {
+        eventRepository.deleteById(eventId);
+    }
+
+    @Override
+    public VotingDTO getVotingById(Long votingId) {
+        // excep
+        return mapperUtil.map(votingRepository.findById(votingId).get(), VotingDTO.class);
+    }
+
+    @Override
+    public void deleteVoting(Long votingId) {
+        votingRepository.deleteById(votingId);
     }
 
     @Override
     @Transactional
-    public VotingDTO createNewVoting(VotingDTO votingDTO) {
+    public VotingDTO createNewVoting(VotingDTO votingDTO, UUID user_id) {
         EventDTO eventDTO = votingDTO.getEvent();
         List<Event> overlappingEvents = eventRepository.findEventsByTravelPlanAndTimeAndPlaceStatus(
                 eventDTO.getTravelPlanId(),
@@ -208,7 +235,16 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Override
     @Transactional
-    public void makeVote(Long votingId) {
-        
+    public void makeVote(VoteDTO voteDTO, UUID user_id) {
+        Vote vote = mapperUtil.map(voteDTO, Vote.class);
+        User user = userRepository.getReferenceById(user_id);
+        Voting voting = votingRepository.getReferenceById(voteDTO.getVoting_id());
+        if (votesRepository.findByCreatorAndVoting(user,voting) != null){
+            throw new AlreadyVotedException(user.getUsername());
+        }
+        vote.setCreator(user);
+        vote.setVoting(voting);
+        votesRepository.save(vote);
     }
+
 }

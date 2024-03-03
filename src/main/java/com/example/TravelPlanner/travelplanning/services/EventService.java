@@ -11,7 +11,7 @@ public interface EventService {
 
     List<EventDTO> listAllEventsByTravelPlan(Long planId);
     EventDTO getEventById(Long eventId);
-    EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, Long planId, UUID userId);
-    void updateEvent(EventDTO eventDTO);
-    void delete(EventDTO eventDTO);
+    EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, UUID userId);
+    EventDTO updateEvent(EventDTO eventDTO);
+    void deleteEvent(Long eventId);
 }

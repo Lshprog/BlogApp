@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,5 +22,7 @@ public interface TravelPlanRepository extends JpaRepository<TravelPlan, Long> {
     @Modifying
     @Query("UPDATE TravelPlan t SET t.joinCode = :joinCode WHERE t.id = :id")
     void updateJoinCodeTravelPlan(@Param(value = "id") Long id, @Param(value = "joinCode") String joinCode);
+
+    Optional<TravelPlan> getTravelPlanByJoinCode(String joinCode);
 
 }

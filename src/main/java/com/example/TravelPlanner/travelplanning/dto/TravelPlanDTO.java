@@ -1,6 +1,7 @@
 package com.example.TravelPlanner.travelplanning.dto;
 
 import com.example.TravelPlanner.travelplanning.entities.UserPlanRoles;
+import com.example.TravelPlanner.travelplanning.entities.Voting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
