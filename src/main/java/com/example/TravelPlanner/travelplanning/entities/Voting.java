@@ -30,9 +30,6 @@ public class Voting implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User creator;
 
-    @OneToOne(mappedBy = "voting")
-    private Event event;
-
     @Column(name = "start_time")
     private LocalDateTime startTime;
 

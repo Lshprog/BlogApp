@@ -57,6 +57,7 @@ public class User implements Serializable {
     private List<TravelPlan> travelPlans = new ArrayList<>();
 
     @OneToMany(mappedBy = "creator")
+    @ToString.Exclude
     private List<Event> events = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")

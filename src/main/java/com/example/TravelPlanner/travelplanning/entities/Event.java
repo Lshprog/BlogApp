@@ -48,7 +48,7 @@ public class Event implements Serializable {
     @Enumerated(EnumType.STRING)
     private PlaceStatus placeStatus;
 
-    @Column(name = "location", columnDefinition = "jsonb")
+    @Column(name = "location")
     private String location;
 
     @Transient
@@ -57,4 +57,5 @@ public class Event implements Serializable {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
     private Voting voting;
+
 }

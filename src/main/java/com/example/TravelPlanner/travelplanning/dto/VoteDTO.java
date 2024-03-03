@@ -7,12 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VoteDTO {
+public class VoteDTO implements Serializable {
 
-    private User creator;
+    private String creator;
 
     private Long voting_id;
 

@@ -3,33 +3,35 @@ package com.example.TravelPlanner.travelplanning.dto;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.common.pojos.Location;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventCreateDTO {
+public class EventCreateDTO implements Serializable {
     @NotBlank
     private String title;
 
     private Long travelPlanId;
 
-    @NotBlank
+    @NotNull
     private LocalDateTime startTime;
 
-    @NotBlank
+    @NotNull
     private LocalDateTime endTime;
 
     private String description;
 
-    @NotBlank
+    @NotNull
     private PlaceStatus placeStatus;
 
-    @NotBlank
+    @NotNull
     private Location loc;
 
     private VotingDTO voting;

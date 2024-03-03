@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 // To show every even on the front page for every travel plan
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventDTO {
+public class EventDTO implements Serializable {
 
     private Long id;
 
@@ -31,7 +32,7 @@ public class EventDTO {
 
     private PlaceStatus placeStatus;
 
-    private Location location;
+    private Location loc;
 
     private VotingDTO voting;
 }

@@ -1,10 +1,7 @@
 package com.example.TravelPlanner.travelplanning.controllers;
 
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
-import com.example.TravelPlanner.travelplanning.dto.EventCreateDTO;
-import com.example.TravelPlanner.travelplanning.dto.EventDTO;
-import com.example.TravelPlanner.travelplanning.dto.VoteDTO;
-import com.example.TravelPlanner.travelplanning.dto.VotingDTO;
+import com.example.TravelPlanner.travelplanning.dto.*;
 import com.example.TravelPlanner.travelplanning.services.TravellingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +18,6 @@ public class VotingController {
     private final TravellingService travellingService;
     @GetMapping("/{votingId}")
     public ResponseEntity<VotingDTO> getVotingById(@PathVariable Long votingId) {
-        // Implementation
         return ResponseEntity.ok().body(travellingService.getVotingById(votingId));
     }
 
@@ -32,18 +28,17 @@ public class VotingController {
 //    }
 
     @PostMapping
-    public ResponseEntity<VotingDTO> createVoting(VotingDTO votingDTO,
-                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        // Implementation
+    public ResponseEntity<VotingDTO> createVoting(@RequestBody VotingCreateDTO votingDTO,
+                                                  @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok().body(travellingService.createNewVoting(votingDTO, customUserDetails.getId()));
     }
 
     // Update voting
-    @PutMapping("/{votingId}")
-    public ResponseEntity<VotingDTO> updateVoting(@PathVariable Long votingId, @RequestBody VotingDTO votingDto) {
-        // Implementation
-        return ResponseEntity.ok().body(new VotingDto());
-    }
+//    @PutMapping("/{votingId}")
+//    public ResponseEntity<VotingDTO> updateVoting(@PathVariable Long votingId, @RequestBody VotingDTO votingDto) {
+//        // Implementation
+//        return ResponseEntity.ok().body(new VotingDto());
+//    }
 
     // Delete voting
     @DeleteMapping("/{votingId}")
@@ -54,10 +49,11 @@ public class VotingController {
     }
 
     // Make vote
-    @PostMapping("/{votingId}/vote")
+    @PostMapping("/{votingId}")
     public ResponseEntity<Void> makeVote(@PathVariable Long votingId, @RequestBody VoteDTO voteDto,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         // Implementation
+        travellingService.makeVote(voteDto, customUserDetails.getId());
         return ResponseEntity.ok().build();
     }
 }

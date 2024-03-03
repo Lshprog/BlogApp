@@ -1,9 +1,17 @@
 package com.example.TravelPlanner.travelplanning.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-public class TravelPlanShowDTO {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class TravelPlanShowDTO implements Serializable {
     private Long id;
 
     private String title;

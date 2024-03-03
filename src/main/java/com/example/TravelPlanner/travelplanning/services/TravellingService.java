@@ -72,7 +72,12 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         TravelPlan newTravelPlan = mapperUtil.map(travelPlanCreateDTO, TravelPlan.class);
         User user = userRepository.getReferenceById(userId);
         newTravelPlan.setOwner(user);
+        newTravelPlan.setJoinCode(CommonUtils.generateJoinLink());
         newTravelPlan = travelPlanRepository.save(newTravelPlan);
+        UserPlanRoles userPlanRoles = new UserPlanRoles();
+        userPlanRoles.setTravelPlan(newTravelPlan);
+        userPlanRoles.setUser(user);
+        userPlanRoles.setRole(PlanRole.OWNER);
         return mapperUtil.map(newTravelPlan, TravelPlanDTO.class);
     }
 
@@ -139,18 +144,6 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         return mapperUtil.mapList(eventRepository.findEventsByTravelPlanId(planId), EventDTO.class);
     }
 
-    private void setEventLocation(Event curEvent, Location newLocation) {
-        curEvent.setLoc(newLocation);
-        curEvent.setLocation(mapperUtil.convertPojoToJson(newLocation));
-    }
-
-    private Location getEventLocation(Event curEvent) {
-        if (curEvent.getLoc() == null && curEvent.getLocation() != null) {
-            curEvent.setLoc(mapperUtil.convertJsonToPojo(curEvent.getLocation(), Location.class));
-        }
-        return curEvent.getLoc();
-    }
-
     @Override
     public EventDTO getEventById(Long eventId) {
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
@@ -170,16 +163,32 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         }
         newEvent.setTravelPlan(optionalTravelPlan.get());
         setEventLocation(newEvent, eventCreateDTO.getLoc());
-        newEvent.setCreator(userRepository.findById(userId).get());
-        return mapperUtil.map(eventRepository.save(newEvent), EventDTO.class);
+        newEvent.setCreator(userRepository.getReferenceById(userId));
+        newEvent = eventRepository.save(newEvent);
+        newEvent.setLoc(eventCreateDTO.getLoc());
+        return mapperUtil.map(newEvent, EventDTO.class);
+    }
 
+    private void setEventLocation(Event curEvent, Location newLocation) {
+        curEvent.setLoc(newLocation);
+        curEvent.setLocation(mapperUtil.convertPojoToJson(newLocation));
+    }
 
+    private Location getEventLocation(Event curEvent) {
+        if (curEvent.getLoc() == null && curEvent.getLocation() != null) {
+            curEvent.setLoc(mapperUtil.convertJsonToPojo(curEvent.getLocation(), Location.class));
+        }
+        return curEvent.getLoc();
     }
 
     @Transactional
     @Override
     public EventDTO updateEvent(EventDTO eventDTO) {
-        Event event = eventRepository.getReferenceById(eventDTO.getId());
+        Optional<Event> eventOptional = eventRepository.findById(eventDTO.getId());
+        if(eventOptional.isEmpty()){
+            throw new EventNotFoundException(eventDTO.getId());
+        }
+        Event event = eventOptional.get();
         if(eventDTO.getPlaceStatus() == PlaceStatus.CONCRETE &&
                 (event.getPlaceStatus() == PlaceStatus.SUGGESTED || event.getPlaceStatus() == PlaceStatus.VOTING)) {
             eventRepository.updateEventStatusByTravelPlanAndTime(
@@ -194,6 +203,15 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         } else {
             event.setPlaceStatus(PlaceStatus.SUGGESTED);
         }
+        setEventLocation(event, eventDTO.getLoc());
+        if(eventDTO.getVoting() != null){
+            event.setVoting(votingRepository.getReferenceById(eventDTO.getVoting().getId()));
+        }
+        event.setTitle(eventDTO.getTitle());
+        event.setDescription(eventDTO.getDescription());
+        event.setStartTime(eventDTO.getStartTime());
+        // here add check and except incorrect timeline
+        event.setEndTime(eventDTO.getEndTime());
         return mapperUtil.map(eventRepository.save(event), EventDTO.class);
     }
 
@@ -216,21 +234,28 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Override
     @Transactional
-    public VotingDTO createNewVoting(VotingDTO votingDTO, UUID user_id) {
-        EventDTO eventDTO = votingDTO.getEvent();
+    public VotingDTO createNewVoting(VotingCreateDTO votingCreateDTO, UUID user_id) {
+        Optional<Event> optionalEvent = eventRepository.findById(votingCreateDTO.getEventId());
+        if(optionalEvent.isEmpty()){
+            throw new EventNotFoundException(votingCreateDTO.getEventId());
+        }
+        Event event = optionalEvent.get();
         List<Event> overlappingEvents = eventRepository.findEventsByTravelPlanAndTimeAndPlaceStatus(
-                eventDTO.getTravelPlanId(),
+                event.getTravelPlan().getId(),
                 PlaceStatus.VOTING,
-                eventDTO.getStartTime(),
-                eventDTO.getStartTime()
+                event.getStartTime(),
+                event.getStartTime()
         );
         if (!overlappingEvents.isEmpty()){
             // throw new exception
         }
-        Voting voting = mapperUtil.map(votingDTO, Voting.class);
-        voting.setEvent(eventRepository.getReferenceById(eventDTO.getId()));
-        //voting.setCreator(userRepository.findByUsername(votingDTO.getCreator()).get());
-        return mapperUtil.map(votingRepository.save(voting),VotingDTO.class);
+        Voting voting = mapperUtil.map(votingCreateDTO, Voting.class);
+        voting.setCreator(userRepository.findByUsername(votingCreateDTO.getCreator()).get());
+        voting = votingRepository.save(voting);
+        event.setVoting(voting);
+        event.setPlaceStatus(PlaceStatus.VOTING);
+        eventRepository.save(event);
+        return mapperUtil.map(voting, VotingDTO.class);
     }
 
     @Override

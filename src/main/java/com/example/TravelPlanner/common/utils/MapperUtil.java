@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class MapperUtil {
 
-    private final ModelMapper modelMapper = new ModelMapper();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ModelMapper modelMapper;
+    private final ObjectMapper objectMapper;
 
 
     public <S, T> T map(S source, Class<T> targetClass) {

@@ -43,6 +43,9 @@ public class TravelPlanMembershipFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request){
         String path = request.getServletPath();
-        return !path.startsWith("/api/v1/travel_plan/");
+        Pattern excludePattern = Pattern.compile("^/api/v1/travelplans/(?!join$).*$");
+        // Use regex to check if the path matches the exclusion criteria
+        Matcher matcher = excludePattern.matcher(path);
+        return !matcher.matches();
     }
 }

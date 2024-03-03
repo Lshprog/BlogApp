@@ -21,7 +21,6 @@ public class EventController {
     // Show event by id
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDTO> getEventById(@PathVariable Long eventId) {
-        // Implementation
         return ResponseEntity.ok().body(travellingService.getEventById(eventId));
     }
 
@@ -33,9 +32,8 @@ public class EventController {
 //    }
 
     @PostMapping
-    public ResponseEntity<EventDTO> createEvent(EventCreateDTO eventDTO,
+    public ResponseEntity<EventDTO> createEvent(@RequestBody EventCreateDTO eventDTO,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        // Implementation
         return ResponseEntity.ok().body(travellingService.saveNewEvent(eventDTO, customUserDetails.getId()));
     }
 
@@ -43,15 +41,13 @@ public class EventController {
     // Update event
     @PutMapping("/{eventId}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable Long eventId, @RequestBody EventDTO eventDto) {
-        // Implementation
         return ResponseEntity.ok().body(travellingService.updateEvent(eventDto));
     }
 
     // Delete event
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
-        // Implementation
         travellingService.deleteEvent(eventId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }
