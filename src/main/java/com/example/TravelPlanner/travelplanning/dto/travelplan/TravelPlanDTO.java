@@ -1,19 +1,13 @@
-package com.example.TravelPlanner.travelplanning.dto;
+package com.example.TravelPlanner.travelplanning.dto.travelplan;
 
-import com.example.TravelPlanner.travelplanning.entities.UserPlanRoles;
-import com.example.TravelPlanner.travelplanning.entities.Voting;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
+import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor

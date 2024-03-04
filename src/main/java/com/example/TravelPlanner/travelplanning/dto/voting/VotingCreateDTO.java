@@ -1,4 +1,4 @@
-package com.example.TravelPlanner.travelplanning.dto;
+package com.example.TravelPlanner.travelplanning.dto.voting;
 
 import com.example.TravelPlanner.travelplanning.entities.Vote;
 import lombok.AllArgsConstructor;

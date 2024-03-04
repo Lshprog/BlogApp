@@ -1,4 +1,4 @@
-package com.example.TravelPlanner.travelplanning.dto;
+package com.example.TravelPlanner.travelplanning.dto.voting;
 
 import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.travelplanning.entities.Voting;
@@ -16,7 +16,7 @@ public class VoteDTO implements Serializable {
 
     private String creator;
 
-    private Long voting_id;
+    private Long votingId;
 
     private String description;
 

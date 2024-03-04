@@ -4,15 +4,24 @@ import com.example.TravelPlanner.auth.UserRepository;
 import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.common.exceptions.custom.*;
 import com.example.TravelPlanner.common.utils.CommonUtils;
+import com.example.TravelPlanner.common.utils.MappingSupport;
+import com.example.TravelPlanner.common.utils.mappers.event.AbstractEventMapper;
+import com.example.TravelPlanner.common.utils.mappers.traveplan.TravelPlanMapper;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.common.enums.PlanRole;
-import com.example.TravelPlanner.travelplanning.common.pojos.Location;
-import com.example.TravelPlanner.travelplanning.dto.*;
+import com.example.TravelPlanner.travelplanning.dto.event.EventCreateDTO;
+import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanShowDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanUpdateDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.VoteDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.VotingCreateDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
 import com.example.TravelPlanner.travelplanning.entities.*;
 import com.example.TravelPlanner.travelplanning.repositories.*;
 import com.example.TravelPlanner.common.utils.MapperUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +37,10 @@ public class TravellingService implements TravelPlanService, EventService, Votin
     private final UserRepository userRepository;
     private final VotingRepository votingRepository;
     private final VotesRepository votesRepository;
-    private final MapperUtil mapperUtil;
+    private final MappingSupport mappingSupport;
+    private final MapperUtil mapperUtil = mappingSupport.getMapperUtil();
+    private final AbstractEventMapper eventMapper;
+    private final TravelPlanMapper travelPlanMapper = new TravelPlanMapper(mapperUtil, eventMapper);
 
     @Override
     public List<TravelPlanShowDTO> listAllTravelPlansByUser(UUID userId) {
@@ -41,7 +53,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         if (optionalTravelPlan.isEmpty()){
             throw new TravelPlanNotFoundException(planId);
         }
-        return mapperUtil.map(optionalTravelPlan.get(), TravelPlanDTO.class);
+        return travelPlanMapper.mapFw(optionalTravelPlan.get());
     }
 
     @Override
@@ -162,25 +174,13 @@ public class TravellingService implements TravelPlanService, EventService, Votin
             throw new TravelPlanNotFoundException(eventCreateDTO.getTravelPlanId());
         }
         newEvent.setTravelPlan(optionalTravelPlan.get());
-        setEventLocation(newEvent, eventCreateDTO.getLoc());
+        eventMapper.setEventLocation(newEvent, eventCreateDTO.getLoc());
         newEvent.setCreator(userRepository.getReferenceById(userId));
         newEvent = eventRepository.save(newEvent);
         newEvent.setLoc(eventCreateDTO.getLoc());
         return mapperUtil.map(newEvent, EventDTO.class);
     }
-
-    private void setEventLocation(Event curEvent, Location newLocation) {
-        curEvent.setLoc(newLocation);
-        curEvent.setLocation(mapperUtil.convertPojoToJson(newLocation));
-    }
-
-    private Location getEventLocation(Event curEvent) {
-        if (curEvent.getLoc() == null && curEvent.getLocation() != null) {
-            curEvent.setLoc(mapperUtil.convertJsonToPojo(curEvent.getLocation(), Location.class));
-        }
-        return curEvent.getLoc();
-    }
-
+    // make even mapper
     @Transactional
     @Override
     public EventDTO updateEvent(EventDTO eventDTO) {
@@ -203,7 +203,10 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         } else {
             event.setPlaceStatus(PlaceStatus.SUGGESTED);
         }
-        setEventLocation(event, eventDTO.getLoc());
+
+        eventMapper.mapFw(event, eventDTO);
+
+        eventMapper.setEventLocation(event, eventDTO.getLoc());
         if(eventDTO.getVoting() != null){
             event.setVoting(votingRepository.getReferenceById(eventDTO.getVoting().getId()));
         }
@@ -263,7 +266,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
     public void makeVote(VoteDTO voteDTO, UUID user_id) {
         Vote vote = mapperUtil.map(voteDTO, Vote.class);
         User user = userRepository.getReferenceById(user_id);
-        Voting voting = votingRepository.getReferenceById(voteDTO.getVoting_id());
+        Voting voting = votingRepository.getReferenceById(voteDTO.getVotingId());
         if (votesRepository.findByCreatorAndVoting(user,voting) != null){
             throw new AlreadyVotedException(user.getUsername());
         }

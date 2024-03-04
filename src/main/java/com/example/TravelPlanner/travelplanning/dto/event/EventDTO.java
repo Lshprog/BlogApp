@@ -1,7 +1,8 @@
-package com.example.TravelPlanner.travelplanning.dto;
+package com.example.TravelPlanner.travelplanning.dto.event;
 
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.common.pojos.Location;
+import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

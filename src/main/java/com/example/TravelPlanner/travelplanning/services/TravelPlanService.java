@@ -1,10 +1,9 @@
 package com.example.TravelPlanner.travelplanning.services;
 
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanCreateDTO;
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanDTO;
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanShowDTO;
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanUpdateDTO;
-import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanShowDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanUpdateDTO;
 import com.example.TravelPlanner.travelplanning.entities.UserPlanRoles;
 
 import java.util.List;

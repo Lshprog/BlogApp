@@ -1,9 +1,8 @@
 package com.example.TravelPlanner.travelplanning.services;
 
-import com.example.TravelPlanner.common.exceptions.custom.UserNotPartOfTravelPlanException;
-import com.example.TravelPlanner.travelplanning.dto.VoteDTO;
-import com.example.TravelPlanner.travelplanning.dto.VotingCreateDTO;
-import com.example.TravelPlanner.travelplanning.dto.VotingDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.VoteDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.VotingCreateDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
 
 import java.util.UUID;
 

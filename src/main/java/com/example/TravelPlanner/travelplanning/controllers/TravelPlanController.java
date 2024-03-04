@@ -1,10 +1,10 @@
 package com.example.TravelPlanner.travelplanning.controllers;
 
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanCreateDTO;
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanDTO;
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanShowDTO;
-import com.example.TravelPlanner.travelplanning.dto.TravelPlanUpdateDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanShowDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanUpdateDTO;
 import com.example.TravelPlanner.travelplanning.services.TravellingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

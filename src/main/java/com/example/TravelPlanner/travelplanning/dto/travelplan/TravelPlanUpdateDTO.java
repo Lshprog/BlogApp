@@ -1,23 +1,29 @@
-package com.example.TravelPlanner.travelplanning.dto;
+package com.example.TravelPlanner.travelplanning.dto.travelplan;
 
+
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TravelPlanShowDTO implements Serializable {
+public class TravelPlanUpdateDTO implements Serializable {
+
+    @NotBlank
     private Long id;
 
+    @NotBlank
     private String title;
 
+    @NotBlank
     private LocalDate startDate;
 
+    @NotBlank
     private LocalDate endDate;
 
 }

@@ -1,8 +1,7 @@
 package com.example.TravelPlanner.travelplanning.services;
 
-import com.example.TravelPlanner.travelplanning.dto.EventCreateDTO;
-import com.example.TravelPlanner.travelplanning.dto.EventDTO;
-import com.example.TravelPlanner.travelplanning.entities.Event;
+import com.example.TravelPlanner.travelplanning.dto.event.EventCreateDTO;
+import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
 
 import java.util.List;
 import java.util.UUID;

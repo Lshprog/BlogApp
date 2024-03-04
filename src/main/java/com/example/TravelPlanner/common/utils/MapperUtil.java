@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
@@ -42,6 +43,15 @@ public class MapperUtil {
         for(S sourceItem : sourceList){
             T mapItem = map(sourceItem, targetClass);
             targetList.add(mapItem);
+        }
+        return targetList;
+    }
+
+    public <S, T> List<T> mapList(List<S> sourceList, Function<S, T> mapFunction) {
+        List<T> targetList = new ArrayList<>();
+        for (S sourceItem : sourceList) {
+            T mappedItem = mapFunction.apply(sourceItem);
+            targetList.add(mappedItem);
         }
         return targetList;
     }
