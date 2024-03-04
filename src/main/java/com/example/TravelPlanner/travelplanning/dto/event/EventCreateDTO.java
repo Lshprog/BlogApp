@@ -19,8 +19,6 @@ public class EventCreateDTO implements Serializable {
     @NotBlank
     private String title;
 
-    private Long travelPlanId;
-
     @NotNull
     private LocalDateTime startTime;
 
@@ -34,6 +32,4 @@ public class EventCreateDTO implements Serializable {
 
     @NotNull
     private Location loc;
-
-    private VotingDTO voting;
 }

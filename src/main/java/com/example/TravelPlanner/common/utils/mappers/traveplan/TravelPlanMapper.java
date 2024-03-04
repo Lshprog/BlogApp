@@ -4,37 +4,45 @@ import com.example.TravelPlanner.auth.UserRepository;
 import com.example.TravelPlanner.common.exceptions.custom.UserNotFoundException;
 import com.example.TravelPlanner.common.utils.MapperUtil;
 import com.example.TravelPlanner.common.utils.MappingSupport;
-import com.example.TravelPlanner.common.utils.mappers.CustomMapper;
-import com.example.TravelPlanner.common.utils.mappers.event.AbstractEventMapper;
 import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanPreviewDTO;
 import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
-public class TravelPlanMapper implements CustomMapper<TravelPlan, TravelPlanDTO> {
+public class TravelPlanMapper {
 
 
     private final MappingSupport mappingSupport;
-    private final MapperUtil mapperUtil = mappingSupport.getMapperUtil();
     private final EventMapper eventMapper;
-    private final UserRepository userRepository = mappingSupport.getUserRepository();
 
-    @Override
-    public TravelPlanDTO mapToDTO(TravelPlan travelPlan) {
-        TravelPlanDTO travelPlanDTO = mapperUtil.map(travelPlan, TravelPlanDTO.class);
-        travelPlanDTO.setEvents(mapperUtil.mapList(travelPlan.getEvents(), eventMapper::mapToDTO));
+    public TravelPlanDTO mapTravelPlanToTravelPlanDTO(TravelPlan travelPlan) {
+        TravelPlanDTO travelPlanDTO = mappingSupport.getMapperUtil().map(travelPlan, TravelPlanDTO.class);
+        travelPlanDTO.setEvents(mappingSupport.getMapperUtil().mapList(travelPlan.getEvents(), eventMapper::mapEventToEventDTO));
         return travelPlanDTO;
     }
 
-    @Override
-    public TravelPlan mapToEntity(TravelPlanDTO travelPlanDTO) {
-        TravelPlan travelPlan = mapperUtil.map(travelPlanDTO, TravelPlan.class);
-        travelPlan.setEvents(mapperUtil.mapList(travelPlanDTO.getEvents(), eventMapper::mapToEntity));
-        travelPlan.setOwner(userRepository.findByUsername(travelPlanDTO.getOwnerUsername())
-                .orElseThrow(() -> new UserNotFoundException(travelPlanDTO.getOwnerUsername())));
+    public TravelPlanPreviewDTO mapTravelPlanToTravelPlanPreviewDTO(TravelPlan travelPlan) {
+        return mappingSupport.getMapperUtil().map(travelPlan, TravelPlanPreviewDTO.class);
+    }
+
+    public TravelPlan mapTravelPlanDTOToTravelPlan(TravelPlanDTO travelPlanDTO) {
+        TravelPlan travelPlan = mappingSupport.getMapperUtil().map(travelPlanDTO, TravelPlan.class);
+        travelPlan.setEvents(mappingSupport.getMapperUtil().mapList(travelPlanDTO.getEvents(), eventDTO ->  eventMapper.mapEventDTOToEvent(eventDTO, travelPlanDTO.getId())));
+        travelPlan.setOwner(mappingSupport.getUserRepository().findByUsername(travelPlanDTO.getCreator())
+                .orElseThrow(() -> new UserNotFoundException(travelPlanDTO.getCreator())));
+        return travelPlan;
+    }
+
+    public TravelPlan mapTravelPlanCreateDTOToTravelPlan(TravelPlanCreateDTO travelPlanDTO, UUID userId) {
+        TravelPlan travelPlan = mappingSupport.getMapperUtil().map(travelPlanDTO, TravelPlan.class);
+        travelPlan.setOwner(mappingSupport.getUserRepository().getReferenceById(userId));
         return travelPlan;
     }
 }

@@ -19,6 +19,7 @@ public class MappingSupport {
     private final VotingRepository votingRepository;
     private final VotesRepository votesRepository;
 
+    // Getter methods for each dependency
     public MapperUtil getMapperUtil() {
         return mapperUtil;
     }

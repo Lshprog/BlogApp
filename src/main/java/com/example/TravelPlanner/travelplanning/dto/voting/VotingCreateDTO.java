@@ -13,8 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class VotingCreateDTO {
 
-    private String creator;
-
     private Long eventId;
 
     private LocalDateTime startTime;

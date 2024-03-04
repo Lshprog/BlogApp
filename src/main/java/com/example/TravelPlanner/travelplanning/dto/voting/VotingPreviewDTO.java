@@ -16,6 +16,8 @@ public class VotingPreviewDTO {
 
     private String creator;
 
+    private String eventTitle;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;

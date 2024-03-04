@@ -5,19 +5,22 @@ import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.common.exceptions.custom.*;
 import com.example.TravelPlanner.common.utils.CommonUtils;
 import com.example.TravelPlanner.common.utils.MappingSupport;
-import com.example.TravelPlanner.common.utils.mappers.event.AbstractEventMapper;
+import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
 import com.example.TravelPlanner.common.utils.mappers.traveplan.TravelPlanMapper;
+import com.example.TravelPlanner.common.utils.mappers.voting.VoteMapper;
+import com.example.TravelPlanner.common.utils.mappers.voting.VotingMapper;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.common.enums.PlanRole;
 import com.example.TravelPlanner.travelplanning.dto.event.EventCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
-import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanShowDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanPreviewDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanUpdateDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VoteDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.VotingPreviewDTO;
 import com.example.TravelPlanner.travelplanning.entities.*;
 import com.example.TravelPlanner.travelplanning.repositories.*;
 import com.example.TravelPlanner.common.utils.MapperUtil;
@@ -38,13 +41,13 @@ public class TravellingService implements TravelPlanService, EventService, Votin
     private final VotingRepository votingRepository;
     private final VotesRepository votesRepository;
     private final MappingSupport mappingSupport;
-    private final MapperUtil mapperUtil = mappingSupport.getMapperUtil();
-    private final AbstractEventMapper eventMapper;
-    private final TravelPlanMapper travelPlanMapper = new TravelPlanMapper(mapperUtil, eventMapper);
+    private final EventMapper eventMapper;
+    private final VotingMapper votingMapper;
+    private final TravelPlanMapper travelPlanMapper;
 
     @Override
-    public List<TravelPlanShowDTO> listAllTravelPlansByUser(UUID userId) {
-        return mapperUtil.mapList(travelPlanRepository.findTravelPlansByUserId(userId), TravelPlanShowDTO.class);
+    public List<TravelPlanPreviewDTO> listAllTravelPlansByUser(UUID userId) {
+        return mappingSupport.getMapperUtil().mapList(travelPlanRepository.findTravelPlansByUserId(userId), TravelPlanPreviewDTO.class);
     }
 
     @Override
@@ -53,7 +56,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         if (optionalTravelPlan.isEmpty()){
             throw new TravelPlanNotFoundException(planId);
         }
-        return travelPlanMapper.mapFw(optionalTravelPlan.get());
+        return travelPlanMapper.mapTravelPlanToTravelPlanDTO(optionalTravelPlan.get());
     }
 
     @Override
@@ -70,32 +73,33 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         }
         TravelPlan travelPlan = optionalTravelPlan.get();
         User user = userRepository.getReferenceById(userId);
-        UserPlanRoles userPlanRoles = new UserPlanRoles();
-        userPlanRoles.setTravelPlan(travelPlan);
-        userPlanRoles.setUser(user);
-        userPlanRoles.setRole(PlanRole.EDITOR);
+        UserPlanRoles userPlanRoles = UserPlanRoles.builder()
+                .travelPlan(travelPlan)
+                .role(PlanRole.EDITOR)
+                .user(user)
+                .build();
         userPlanRolesRepository.save(userPlanRoles);
-        return mapperUtil.map(travelPlan, TravelPlanDTO.class);
+        return travelPlanMapper.mapTravelPlanToTravelPlanDTO(travelPlan);
     }
 
     @Transactional
     @Override
     public TravelPlanDTO saveNewTravelPlan(TravelPlanCreateDTO travelPlanCreateDTO, UUID userId) {
-        TravelPlan newTravelPlan = mapperUtil.map(travelPlanCreateDTO, TravelPlan.class);
-        User user = userRepository.getReferenceById(userId);
-        newTravelPlan.setOwner(user);
+        TravelPlan newTravelPlan = travelPlanMapper.mapTravelPlanCreateDTOToTravelPlan(travelPlanCreateDTO, userId);
         newTravelPlan.setJoinCode(CommonUtils.generateJoinLink());
         newTravelPlan = travelPlanRepository.save(newTravelPlan);
-        UserPlanRoles userPlanRoles = new UserPlanRoles();
-        userPlanRoles.setTravelPlan(newTravelPlan);
-        userPlanRoles.setUser(user);
-        userPlanRoles.setRole(PlanRole.OWNER);
-        return mapperUtil.map(newTravelPlan, TravelPlanDTO.class);
+        UserPlanRoles userPlanRoles = UserPlanRoles.builder()
+                .travelPlan(newTravelPlan)
+                .role(PlanRole.OWNER)
+                .user(userRepository.getReferenceById(userId))
+                .build();
+        userPlanRolesRepository.save(userPlanRoles);
+        return travelPlanMapper.mapTravelPlanToTravelPlanDTO(newTravelPlan);
     }
 
     @Transactional
     @Override
-    public TravelPlanDTO updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, UUID userId) throws NoSuchElementException {
+    public void updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, UUID userId) throws NoSuchElementException {
         Optional<TravelPlan> optionalTravelPlan = travelPlanRepository.findById(travelPlanDTO.getId());
         if (optionalTravelPlan.isEmpty()){
             throw new TravelPlanNotFoundException(travelPlanDTO.getId());
@@ -104,7 +108,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         curTravelPlan.setTitle(travelPlanDTO.getTitle());
         curTravelPlan.setStartDate(travelPlanDTO.getStartDate());
         curTravelPlan.setEndDate(travelPlanDTO.getEndDate());
-        return mapperUtil.map(travelPlanRepository.save(curTravelPlan), TravelPlanDTO.class);
+        travelPlanRepository.save(curTravelPlan);
     }
 
     @Transactional
@@ -153,7 +157,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Override
     public List<EventDTO> listAllEventsByTravelPlan(Long planId) {
-        return mapperUtil.mapList(eventRepository.findEventsByTravelPlanId(planId), EventDTO.class);
+        return mappingSupport.getMapperUtil().mapList(eventRepository.findNotSomePlaceStatusEvents(planId, PlaceStatus.VOTING), eventMapper::mapEventToEventDTO);
     }
 
     @Override
@@ -162,28 +166,20 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         if (optionalEvent.isEmpty()){
             throw new EventNotFoundException(eventId);
         }
-        return mapperUtil.map(optionalEvent.get(), EventDTO.class);
+        return eventMapper.mapEventToEventDTO(optionalEvent.get());
     }
 
     @Override
     @Transactional
-    public EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, UUID userId) {
-        Event newEvent = mapperUtil.map(eventCreateDTO, Event.class);
-        Optional<TravelPlan> optionalTravelPlan = travelPlanRepository.findById(eventCreateDTO.getTravelPlanId());
-        if (optionalTravelPlan.isEmpty()){
-            throw new TravelPlanNotFoundException(eventCreateDTO.getTravelPlanId());
-        }
-        newEvent.setTravelPlan(optionalTravelPlan.get());
-        eventMapper.setEventLocation(newEvent, eventCreateDTO.getLoc());
-        newEvent.setCreator(userRepository.getReferenceById(userId));
+    public EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, UUID userId, Long travelPlanId) {
+        Event newEvent = eventMapper.mapEventCreateDTOtoEvent(eventCreateDTO, travelPlanId, userId);
         newEvent = eventRepository.save(newEvent);
-        newEvent.setLoc(eventCreateDTO.getLoc());
-        return mapperUtil.map(newEvent, EventDTO.class);
+        return eventMapper.mapEventToEventDTO(newEvent);
     }
-    // make even mapper
+
     @Transactional
     @Override
-    public EventDTO updateEvent(EventDTO eventDTO) {
+    public void updateEvent(EventDTO eventDTO, Long travelPlanId) {
         Optional<Event> eventOptional = eventRepository.findById(eventDTO.getId());
         if(eventOptional.isEmpty()){
             throw new EventNotFoundException(eventDTO.getId());
@@ -192,7 +188,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         if(eventDTO.getPlaceStatus() == PlaceStatus.CONCRETE &&
                 (event.getPlaceStatus() == PlaceStatus.SUGGESTED || event.getPlaceStatus() == PlaceStatus.VOTING)) {
             eventRepository.updateEventStatusByTravelPlanAndTime(
-                    eventDTO.getTravelPlanId(),
+                    travelPlanId,
                     event.getPlaceStatus(),
                     event.getPlaceStatus(),
                     event.getStartTime(),
@@ -204,18 +200,12 @@ public class TravellingService implements TravelPlanService, EventService, Votin
             event.setPlaceStatus(PlaceStatus.SUGGESTED);
         }
 
-        eventMapper.mapFw(event, eventDTO);
-
         eventMapper.setEventLocation(event, eventDTO.getLoc());
-        if(eventDTO.getVoting() != null){
-            event.setVoting(votingRepository.getReferenceById(eventDTO.getVoting().getId()));
-        }
         event.setTitle(eventDTO.getTitle());
         event.setDescription(eventDTO.getDescription());
         event.setStartTime(eventDTO.getStartTime());
-        // here add check and except incorrect timeline
         event.setEndTime(eventDTO.getEndTime());
-        return mapperUtil.map(eventRepository.save(event), EventDTO.class);
+        eventRepository.save(event);
     }
 
     @Override
@@ -226,8 +216,11 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Override
     public VotingDTO getVotingById(Long votingId) {
-        // excep
-        return mapperUtil.map(votingRepository.findById(votingId).get(), VotingDTO.class);
+        Optional<Voting> optionalVoting = votingRepository.findById(votingId);
+        if (optionalVoting.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return votingMapper.mapVotingToVotingDto(optionalVoting.get());
     }
 
     @Override
@@ -237,7 +230,7 @@ public class TravellingService implements TravelPlanService, EventService, Votin
 
     @Override
     @Transactional
-    public VotingDTO createNewVoting(VotingCreateDTO votingCreateDTO, UUID user_id) {
+    public VotingDTO createNewVoting(VotingCreateDTO votingCreateDTO, UUID userId) {
         Optional<Event> optionalEvent = eventRepository.findById(votingCreateDTO.getEventId());
         if(optionalEvent.isEmpty()){
             throw new EventNotFoundException(votingCreateDTO.getEventId());
@@ -252,19 +245,17 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         if (!overlappingEvents.isEmpty()){
             // throw new exception
         }
-        Voting voting = mapperUtil.map(votingCreateDTO, Voting.class);
-        voting.setCreator(userRepository.findByUsername(votingCreateDTO.getCreator()).get());
+        Voting voting = votingMapper.mapVotingCreateDTOtoVoting(votingCreateDTO,userId);
         voting = votingRepository.save(voting);
-        event.setVoting(voting);
         event.setPlaceStatus(PlaceStatus.VOTING);
         eventRepository.save(event);
-        return mapperUtil.map(voting, VotingDTO.class);
+        return votingMapper.mapVotingToVotingDto(voting);
     }
 
     @Override
     @Transactional
     public void makeVote(VoteDTO voteDTO, UUID user_id) {
-        Vote vote = mapperUtil.map(voteDTO, Vote.class);
+        Vote vote = mappingSupport.getMapperUtil().map(voteDTO, Vote.class);
         User user = userRepository.getReferenceById(user_id);
         Voting voting = votingRepository.getReferenceById(voteDTO.getVotingId());
         if (votesRepository.findByCreatorAndVoting(user,voting) != null){
@@ -273,6 +264,11 @@ public class TravellingService implements TravelPlanService, EventService, Votin
         vote.setCreator(user);
         vote.setVoting(voting);
         votesRepository.save(vote);
+    }
+
+    @Override
+    public List<VotingPreviewDTO> getVotingsByTravelPlan(Long travelPlanId) {
+        return mappingSupport.getMapperUtil().mapList(votingRepository.findVotingsByTravelPlanId(travelPlanId), votingMapper::mapVotingToVotingPreviewDto);
     }
 
 }

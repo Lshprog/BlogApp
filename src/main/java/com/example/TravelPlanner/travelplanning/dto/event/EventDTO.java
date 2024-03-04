@@ -23,8 +23,6 @@ public class EventDTO implements Serializable {
 
     private String title;
 
-    private Long travelPlanId;
-
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -34,6 +32,4 @@ public class EventDTO implements Serializable {
     private PlaceStatus placeStatus;
 
     private Location loc;
-
-    private VotingDTO voting;
 }

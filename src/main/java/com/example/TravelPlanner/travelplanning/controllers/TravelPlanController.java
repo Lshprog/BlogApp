@@ -3,7 +3,7 @@ package com.example.TravelPlanner.travelplanning.controllers;
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
-import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanShowDTO;
+import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanPreviewDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanUpdateDTO;
 import com.example.TravelPlanner.travelplanning.services.TravellingService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class TravelPlanController {
     private final TravellingService travellingService;
 
     @GetMapping
-    public ResponseEntity<List<TravelPlanShowDTO>> getAllTravelPlansForUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<List<TravelPlanPreviewDTO>> getAllTravelPlansForUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok().body(travellingService.listAllTravelPlansByUser(customUserDetails.getId()));
     }
 
@@ -49,9 +49,10 @@ public class TravelPlanController {
     }
 
     @PutMapping("/{travelPlanId}")
-    public ResponseEntity<TravelPlanDTO> updateTravelPlan(@RequestBody TravelPlanUpdateDTO travelPlanUpdateDTO,
+    public ResponseEntity<Void> updateTravelPlan(@RequestBody TravelPlanUpdateDTO travelPlanUpdateDTO,
                                                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return ResponseEntity.ok().body(travellingService.updateTravelPlan(travelPlanUpdateDTO, customUserDetails.getId()));
+        travellingService.updateTravelPlan(travelPlanUpdateDTO, customUserDetails.getId());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{travelPlanId}")

@@ -16,7 +16,7 @@ public class TravelPlanDTO implements Serializable {
 
     private Long id;
 
-    private String ownerUsername;
+    private String creator;
 
     private String title;
 

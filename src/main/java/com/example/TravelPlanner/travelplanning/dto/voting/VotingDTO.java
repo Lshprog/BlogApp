@@ -1,5 +1,6 @@
 package com.example.TravelPlanner.travelplanning.dto.voting;
 
+import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class VotingDTO implements Serializable {
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
+
+    private EventDTO event;
 
     private List<VoteDTO> votes;
 

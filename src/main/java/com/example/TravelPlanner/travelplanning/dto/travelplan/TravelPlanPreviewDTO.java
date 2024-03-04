@@ -6,12 +6,11 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TravelPlanShowDTO implements Serializable {
+public class TravelPlanPreviewDTO implements Serializable {
     private Long id;
 
     private String title;

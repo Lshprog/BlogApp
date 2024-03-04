@@ -54,8 +54,4 @@ public class Event implements Serializable {
     @Transient
     private Location loc;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "voting_id", referencedColumnName = "id")
-    private Voting voting;
-
 }

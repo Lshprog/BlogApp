@@ -36,6 +36,10 @@ public class Voting implements Serializable {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
+    @OneToOne()
+    @JoinColumn(name = "event_id", referencedColumnName = "id")
+    private Event event;
+
     @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vote> votes = new ArrayList<>();
 

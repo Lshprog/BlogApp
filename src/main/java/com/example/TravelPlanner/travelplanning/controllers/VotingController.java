@@ -4,11 +4,14 @@ import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.travelplanning.dto.voting.VoteDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.VotingPreviewDTO;
 import com.example.TravelPlanner.travelplanning.services.TravellingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/travelplans/{travelPlanId}/voting")
@@ -21,11 +24,10 @@ public class VotingController {
         return ResponseEntity.ok().body(travellingService.getVotingById(votingId));
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<VotingDTO>> getVotings(@PathVariable Long eventId) {
-//        // Implementation
-//        return ResponseEntity.ok().body(new ArrayList<>());
-//    }
+    @GetMapping
+    public ResponseEntity<List<VotingPreviewDTO>> getVotings(@PathVariable Long travelPlanId) {
+        return ResponseEntity.ok().body(travellingService.getVotingsByTravelPlan(travelPlanId));
+    }
 
     @PostMapping
     public ResponseEntity<VotingDTO> createVoting(@RequestBody VotingCreateDTO votingDTO,
