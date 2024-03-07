@@ -36,3 +36,4 @@ build/
 
 ### Properties files ###
 src/main/resources/localpostgres.properties
+src/main/resources/db

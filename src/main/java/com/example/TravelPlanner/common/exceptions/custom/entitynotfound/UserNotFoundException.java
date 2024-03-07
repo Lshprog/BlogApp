@@ -1,4 +1,4 @@
-package com.example.TravelPlanner.common.exceptions.custom;
+package com.example.TravelPlanner.common.exceptions.custom.entitynotfound;
 
 import java.util.UUID;
 

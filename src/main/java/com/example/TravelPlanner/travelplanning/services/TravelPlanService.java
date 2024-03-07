@@ -14,11 +14,11 @@ public interface TravelPlanService {
     List<TravelPlanPreviewDTO> listAllTravelPlansByUser(UUID userId);
     TravelPlanDTO getTravelPlanById(Long planId);
     TravelPlanDTO saveNewTravelPlan(TravelPlanCreateDTO travelPlanCreateDTO, UUID user);
-    void updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, UUID userId);
+    void updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, Long travelPLanId, UUID userId);
     void deleteTravelPlan(Long travelPlanId, UUID userId);
     String generateNewInviteLink(Long travelPlanId);
-    void leaveTravelPlan(TravelPlanDTO travelPlanDTO, UUID userId);
-    List<UserPlanRoles> findPlanUsers(TravelPlanDTO travelPlanDTO);
+    void leaveTravelPlan(Long travelPlanId, UUID userId);
+    List<UserPlanRoles> findPlanUsers(Long travelPlanId);
     TravelPlanDTO joinTravelPlan(String joinCode, UUID userId);
 
 }

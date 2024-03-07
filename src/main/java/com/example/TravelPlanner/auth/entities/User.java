@@ -43,6 +43,7 @@ public class User implements Serializable {
     private String email;
 
     @Column(name = "password_hash",nullable = false)
+    @ToString.Exclude
     private String password;
 
     @Column(nullable = false)
@@ -54,6 +55,7 @@ public class User implements Serializable {
     private String profileImageUrl; // connect aws bucket and then save profile pics there
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
+    @ToString.Exclude
     private List<TravelPlan> travelPlans = new ArrayList<>();
 
     @OneToMany(mappedBy = "creator")
@@ -61,5 +63,6 @@ public class User implements Serializable {
     private List<Event> events = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private Set<UserPlanRoles> userPlanRoles = new HashSet<>();
 }

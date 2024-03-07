@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
@@ -33,4 +34,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e WHERE e.travelPlan.id = :travelPlanId AND e.placeStatus <> :excludedStatus")
     List<Event> findNotSomePlaceStatusEvents(@Param("travelPlanId") Long travelPlanId, @Param("excludedStatus") PlaceStatus excludedStatus);
 
+    @Query("SELECT CASE WHEN COUNT(v) > 0 THEN true ELSE false END FROM Event v WHERE v.creator.id = :userId AND v.id = :eventId")
+    boolean isCreator(@Param("eventId") Long eventId, @Param("userId") UUID userId);
 }

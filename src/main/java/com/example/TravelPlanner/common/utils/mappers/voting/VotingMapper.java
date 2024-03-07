@@ -1,14 +1,11 @@
 package com.example.TravelPlanner.common.utils.mappers.voting;
 
-import com.example.TravelPlanner.auth.UserRepository;
-import com.example.TravelPlanner.common.utils.MapperUtil;
 import com.example.TravelPlanner.common.utils.MappingSupport;
 import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingPreviewDTO;
 import com.example.TravelPlanner.travelplanning.entities.Voting;
-import com.example.TravelPlanner.travelplanning.repositories.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

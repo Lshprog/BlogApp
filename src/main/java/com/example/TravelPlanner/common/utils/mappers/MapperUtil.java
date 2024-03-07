@@ -1,8 +1,9 @@
-package com.example.TravelPlanner.common.utils;
+package com.example.TravelPlanner.common.utils.mappers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class MapperUtil {
 
     private final ModelMapper modelMapper;

@@ -3,25 +3,25 @@ package com.example.TravelPlanner.travelplanning.controllers;
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.travelplanning.dto.event.EventCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
-import com.example.TravelPlanner.travelplanning.services.TravellingService;
+import com.example.TravelPlanner.travelplanning.services.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/travelplans/{travelPlanId}/events")
 @RequiredArgsConstructor
+@Validated
 public class EventController {
 
-    private final TravellingService travellingService;
+    private final EventService eventService;
 
     // Show event by id
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDTO> getEventById(@PathVariable Long eventId) {
-        return ResponseEntity.ok().body(travellingService.getEventById(eventId));
+        return ResponseEntity.ok().body(eventService.getEventById(eventId));
     }
 //    @GetMapping
 //    public ResponseEntity<List<EventDTO>> getEvents(@PathVariable Long travelPlanId) {
@@ -33,7 +33,7 @@ public class EventController {
     public ResponseEntity<EventDTO> createEvent(@PathVariable Long travelPlanId,
                                                 @RequestBody EventCreateDTO eventDTO,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return ResponseEntity.ok().body(travellingService.saveNewEvent(eventDTO, customUserDetails.getId(), travelPlanId));
+        return ResponseEntity.ok().body(eventService.saveNewEvent(eventDTO, customUserDetails.getId(), travelPlanId));
     }
 
 
@@ -42,14 +42,14 @@ public class EventController {
     public ResponseEntity<EventDTO> updateEvent(@PathVariable Long travelPlanId,
                                                 @PathVariable Long eventId,
                                                 @RequestBody EventDTO eventDto) {
-        travellingService.updateEvent(eventDto, travelPlanId);
+        eventService.updateEvent(eventDto, travelPlanId);
         return ResponseEntity.ok().build();
     }
 
     // Delete event
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
-        travellingService.deleteEvent(eventId);
+        eventService.deleteEvent(eventId);
         return ResponseEntity.ok().build();
     }
 }

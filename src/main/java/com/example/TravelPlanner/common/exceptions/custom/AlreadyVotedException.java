@@ -1,7 +1,9 @@
 package com.example.TravelPlanner.common.exceptions.custom;
 
+import java.util.UUID;
+
 public class AlreadyVotedException extends RuntimeException {
-    public AlreadyVotedException(String user) {
-        super(user + " already voted!");
+    public AlreadyVotedException() {
+        super("Already voted!");
     }
 }

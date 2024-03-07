@@ -1,7 +1,7 @@
 package com.example.TravelPlanner.auth.config;
 
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
-import com.example.TravelPlanner.common.utils.MapperUtil;
+import com.example.TravelPlanner.common.utils.mappers.MapperUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.example.TravelPlanner.common.exceptions.custom;
+package com.example.TravelPlanner.common.exceptions.custom.entitynotfound;
 
 public class EventNotFoundException extends EntityNotFoundException {
     public EventNotFoundException(Long id) {

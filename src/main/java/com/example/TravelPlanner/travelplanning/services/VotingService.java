@@ -1,9 +1,6 @@
 package com.example.TravelPlanner.travelplanning.services;
 
-import com.example.TravelPlanner.travelplanning.dto.voting.VoteDTO;
-import com.example.TravelPlanner.travelplanning.dto.voting.VotingCreateDTO;
-import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
-import com.example.TravelPlanner.travelplanning.dto.voting.VotingPreviewDTO;
+import com.example.TravelPlanner.travelplanning.dto.voting.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,9 +11,9 @@ public interface VotingService {
 
     void deleteVoting(Long votingId);
 
-    VotingDTO createNewVoting(VotingCreateDTO votingDTO, UUID user_id);
+    VotingDTO createNewVoting(VotingCreateDTO votingDTO, UUID userId);
 
-    void makeVote(VoteDTO voteDTO, UUID user_id);
+    void makeVote(VoteCreateDTO voteCreateDTO, Long votingId, UUID userId);
 
     List<VotingPreviewDTO> getVotingsByTravelPlan(Long travelPlanId);
 

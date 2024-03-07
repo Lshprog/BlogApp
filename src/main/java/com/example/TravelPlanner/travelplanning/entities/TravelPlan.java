@@ -2,10 +2,7 @@ package com.example.TravelPlanner.travelplanning.entities;
 
 import com.example.TravelPlanner.auth.entities.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -24,6 +21,7 @@ public class TravelPlan implements Serializable {
     private Long id;
 
     @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Event> events = new ArrayList<>();
 
     @ManyToOne
@@ -43,5 +41,18 @@ public class TravelPlan implements Serializable {
     private String title;
 
     @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private Set<UserPlanRoles> userPlanRoles = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "TravelPlan{" +
+                "id=" + id +
+                ", owner=" + owner.getUsername() +
+                ", joinCode='" + joinCode + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }

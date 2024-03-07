@@ -1,4 +1,4 @@
-package com.example.TravelPlanner.common.utils;
+package com.example.TravelPlanner.common.utils.mappers;
 
 import java.security.SecureRandom;
 

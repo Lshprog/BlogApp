@@ -1,21 +1,20 @@
 package com.example.TravelPlanner.common.utils.mappers.event;
 
-import com.example.TravelPlanner.auth.UserRepository;
-import com.example.TravelPlanner.common.exceptions.custom.UserNotFoundException;
+import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.UserNotFoundException;
 import com.example.TravelPlanner.common.utils.MappingSupport;
 import com.example.TravelPlanner.travelplanning.common.pojos.Location;
 import com.example.TravelPlanner.travelplanning.dto.event.EventCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
 import com.example.TravelPlanner.travelplanning.entities.Event;
-import com.example.TravelPlanner.travelplanning.repositories.EventRepository;
-import com.example.TravelPlanner.travelplanning.repositories.TravelPlanRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class EventMapper{
 
     private final MappingSupport mappingSupport;
@@ -46,15 +45,14 @@ public class EventMapper{
 
 
     public void setEventLocation(Event curEvent, Location newLocation) {
-        curEvent.setLoc(newLocation);
         curEvent.setLocation(mappingSupport.getMapperUtil().convertPojoToJson(newLocation));
     }
 
     public Location getEventLocation(Event curEvent) {
-        if (curEvent.getLoc() == null && curEvent.getLocation() != null) {
-            curEvent.setLoc(mappingSupport.getMapperUtil().convertJsonToPojo(curEvent.getLocation(), Location.class));
+        if (curEvent.getLocation() != null) {
+            return (mappingSupport.getMapperUtil().convertJsonToPojo(curEvent.getLocation(), Location.class));
         }
-        return curEvent.getLoc();
+        return null;
     }
 
 }

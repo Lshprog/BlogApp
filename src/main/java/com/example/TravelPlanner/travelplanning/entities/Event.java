@@ -2,13 +2,8 @@ package com.example.TravelPlanner.travelplanning.entities;
 
 import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
-import com.example.TravelPlanner.travelplanning.common.pojos.Location;
-import com.example.TravelPlanner.common.utils.MapperUtil;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -27,6 +22,7 @@ public class Event implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ToString.Exclude
     private User creator;
 
     @Column(name = "title")
@@ -40,6 +36,7 @@ public class Event implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "travel_plan_id", referencedColumnName = "id")
+    @ToString.Exclude
     private TravelPlan travelPlan;
 
     @Column(name = "description", columnDefinition = "text")
@@ -51,7 +48,19 @@ public class Event implements Serializable {
     @Column(name = "location")
     private String location;
 
-    @Transient
-    private Location loc;
 
+//    @Override
+//    public String toString() {
+//        return "Event{" +
+//                "id=" + id +
+//                ", creator=" + creator.getUsername() +
+//                ", title='" + title + '\'' +
+//                ", startTime=" + startTime +
+//                ", endTime=" + endTime +
+//                ", travelPlan=" + travelPlan.getId() +
+//                ", description='" + description + '\'' +
+//                ", placeStatus=" + placeStatus +
+//                ", location='" + location + '\'' +
+//                '}';
+//    }
 }

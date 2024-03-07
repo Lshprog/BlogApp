@@ -1,6 +1,7 @@
 package com.example.TravelPlanner.travelplanning.dto.travelplan;
 
 import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

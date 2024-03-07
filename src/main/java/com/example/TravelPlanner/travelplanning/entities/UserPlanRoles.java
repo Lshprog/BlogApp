@@ -3,10 +3,7 @@ package com.example.TravelPlanner.travelplanning.entities;
 import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.travelplanning.common.enums.PlanRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -24,10 +21,12 @@ public class UserPlanRoles implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "travel_plan_id", referencedColumnName = "id")
+    @ToString.Exclude
     private TravelPlan travelPlan;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ToString.Exclude
     private User user;
 
     @Enumerated(EnumType.STRING)

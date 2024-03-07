@@ -2,8 +2,7 @@ package com.example.TravelPlanner.common.exceptions;
 
 import com.example.TravelPlanner.common.exceptions.custom.AlreadyVotedException;
 import com.example.TravelPlanner.common.exceptions.custom.CustomAuthException;
-import com.example.TravelPlanner.common.exceptions.custom.EntityNotFoundException;
-import com.example.TravelPlanner.common.exceptions.custom.UserNotPartOfTravelPlanException;
+import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

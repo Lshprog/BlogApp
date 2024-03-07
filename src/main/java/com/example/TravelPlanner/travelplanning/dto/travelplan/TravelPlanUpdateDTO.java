@@ -15,9 +15,6 @@ import java.time.LocalDate;
 public class TravelPlanUpdateDTO implements Serializable {
 
     @NotBlank
-    private Long id;
-
-    @NotBlank
     private String title;
 
     @NotBlank

@@ -1,8 +1,6 @@
 package com.example.TravelPlanner.common.utils.mappers.traveplan;
 
-import com.example.TravelPlanner.auth.UserRepository;
-import com.example.TravelPlanner.common.exceptions.custom.UserNotFoundException;
-import com.example.TravelPlanner.common.utils.MapperUtil;
+import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.UserNotFoundException;
 import com.example.TravelPlanner.common.utils.MappingSupport;
 import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
@@ -25,6 +23,7 @@ public class TravelPlanMapper {
     public TravelPlanDTO mapTravelPlanToTravelPlanDTO(TravelPlan travelPlan) {
         TravelPlanDTO travelPlanDTO = mappingSupport.getMapperUtil().map(travelPlan, TravelPlanDTO.class);
         travelPlanDTO.setEvents(mappingSupport.getMapperUtil().mapList(travelPlan.getEvents(), eventMapper::mapEventToEventDTO));
+        travelPlanDTO.setCreator(travelPlan.getOwner().getUsername());
         return travelPlanDTO;
     }
 

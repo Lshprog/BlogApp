@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 public class TravelPlanMembershipFilter extends OncePerRequestFilter {
 
     private final UserPlanRolesRepository userPlanRolesRepository;
+
+    private final TravelPlanRepository travelPlanRepository;
     private static final Pattern travelPlanIdPattern = Pattern.compile("^/api/v1/(\\d+)/.*");
 
     @Override
@@ -30,6 +32,10 @@ public class TravelPlanMembershipFilter extends OncePerRequestFilter {
         Matcher matcher = travelPlanIdPattern.matcher(path);
         if (matcher.find()) {
             Long travelPlanId = Long.parseLong(matcher.group(1));
+            if (!travelPlanRepository.existsById(travelPlanId)) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such travel plan");
+                return;
+            }
             CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if(userPlanRolesRepository.existsByUserIdAndTravelPlanId(travelPlanId, principal.getId())){
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "User is not part of the travel plan");
