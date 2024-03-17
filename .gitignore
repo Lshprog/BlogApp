@@ -35,5 +35,6 @@ build/
 .env
 
 ### Properties files ###
-src/main/resources/localpostgres.properties
+#src/main/resources/localpostgres.properties
 src/main/resources/db
+docker-compose.yml

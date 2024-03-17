@@ -2,6 +2,7 @@ package com.example.TravelPlanner.common.exceptions;
 
 import com.example.TravelPlanner.common.exceptions.custom.AlreadyVotedException;
 import com.example.TravelPlanner.common.exceptions.custom.CustomAuthException;
+import com.example.TravelPlanner.common.exceptions.custom.OverlappingEventsException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AlreadyVotedException.class)
     public ResponseEntity<Object> handleAlreadyVoted(AlreadyVotedException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(OverlappingEventsException.class)
+    public ResponseEntity<Object> handleOverlappingEvents(OverlappingEventsException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());

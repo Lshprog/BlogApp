@@ -56,13 +56,16 @@ public class User implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
     @ToString.Exclude
+    @Builder.Default
     private List<TravelPlan> travelPlans = new ArrayList<>();
 
     @OneToMany(mappedBy = "creator")
     @ToString.Exclude
+    @Builder.Default
     private List<Event> events = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Builder.Default
     private Set<UserPlanRoles> userPlanRoles = new HashSet<>();
 }

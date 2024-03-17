@@ -2,6 +2,7 @@ package com.example.TravelPlanner.travelplanning.services;
 
 import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.common.exceptions.custom.*;
+import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EntityNotFoundException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.TravelPlanNotFoundException;
 import com.example.TravelPlanner.common.utils.mappers.CommonUtils;
 import com.example.TravelPlanner.common.utils.MappingSupport;
@@ -36,12 +37,22 @@ public class TravelPlanServiceImpl implements TravelPlanService{
 
     @Override
     public TravelPlanDTO getTravelPlanById(Long travelPlanId) {
-        return travelPlanMapper.mapTravelPlanToTravelPlanDTO(mappingSupport.getTravelPlanRepository().findById(travelPlanId).get());
+        Optional<TravelPlan> optionalTravelPlan = mappingSupport.getTravelPlanRepository().findById(travelPlanId);
+        if(optionalTravelPlan.isEmpty()) {
+            throw new TravelPlanNotFoundException(travelPlanId);
+        }
+        return travelPlanMapper.mapTravelPlanToTravelPlanDTO(optionalTravelPlan.get());
     }
 
     @Override
     public List<UserPlanRoles> findPlanUsers(Long travelPlanId) {
-        return mappingSupport.getUserPlanRolesRepository().findUserPlanRolesByTravelPlan(travelPlanId);
+        List<UserPlanRoles> planRoles = new ArrayList<>();
+        try{
+            planRoles = mappingSupport.getUserPlanRolesRepository().findUserPlanRolesByTravelPlan(travelPlanId);
+        } catch (EntityNotFoundException e) {
+            throw new TravelPlanNotFoundException(travelPlanId);
+        }
+        return planRoles;
     }
 
     @Override
@@ -79,8 +90,12 @@ public class TravelPlanServiceImpl implements TravelPlanService{
 
     @Transactional
     @Override
-    public void updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, Long travelPlanId, UUID userId) throws NoSuchElementException {
-        TravelPlan curTravelPlan = mappingSupport.getTravelPlanRepository().findById(travelPlanId).get();
+    public void updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, Long travelPlanId, UUID userId) {
+        Optional<TravelPlan> optionalTravelPlan = mappingSupport.getTravelPlanRepository().findById(travelPlanId);
+        if(optionalTravelPlan.isEmpty()) {
+            throw new TravelPlanNotFoundException(travelPlanId);
+        }
+        TravelPlan curTravelPlan = optionalTravelPlan.get();
         curTravelPlan.setTitle(travelPlanDTO.getTitle());
         curTravelPlan.setStartDate(travelPlanDTO.getStartDate());
         curTravelPlan.setEndDate(travelPlanDTO.getEndDate());

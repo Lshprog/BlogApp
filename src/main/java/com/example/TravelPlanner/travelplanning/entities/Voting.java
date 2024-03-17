@@ -41,6 +41,7 @@ public class Voting implements Serializable {
     private Event event;
 
     @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Vote> votes = new ArrayList<>();
 
 }

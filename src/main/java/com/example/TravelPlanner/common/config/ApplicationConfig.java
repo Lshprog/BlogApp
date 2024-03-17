@@ -12,8 +12,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,11 +30,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
+@PropertySource("classpath:application.properties")
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
     private final TravelPlanRepository travelPlanRepository;
     private final ModelMapper modelMapper = new ModelMapper();
+
+    @Value("${redis_hostname}")
+    private String redis_hostname;
+
+    @Value("${redis_port}")
+    private Integer redis_port;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -72,7 +81,7 @@ public class ApplicationConfig {
 
     @Bean
     RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+        return new LettuceConnectionFactory(redis_hostname, redis_port);
     }
 
     @Bean

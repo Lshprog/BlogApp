@@ -48,19 +48,4 @@ public class Event implements Serializable {
     @Column(name = "location")
     private String location;
 
-
-//    @Override
-//    public String toString() {
-//        return "Event{" +
-//                "id=" + id +
-//                ", creator=" + creator.getUsername() +
-//                ", title='" + title + '\'' +
-//                ", startTime=" + startTime +
-//                ", endTime=" + endTime +
-//                ", travelPlan=" + travelPlan.getId() +
-//                ", description='" + description + '\'' +
-//                ", placeStatus=" + placeStatus +
-//                ", location='" + location + '\'' +
-//                '}';
-//    }
 }

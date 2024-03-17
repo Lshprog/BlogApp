@@ -22,6 +22,7 @@ public class TravelPlan implements Serializable {
 
     @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
+    @Builder.Default
     private List<Event> events = new ArrayList<>();
 
     @ManyToOne
@@ -42,6 +43,7 @@ public class TravelPlan implements Serializable {
 
     @OneToMany(mappedBy = "travelPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
+    @Builder.Default
     private Set<UserPlanRoles> userPlanRoles = new HashSet<>();
 
     @Override

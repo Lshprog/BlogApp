@@ -1,6 +1,7 @@
 package com.example.TravelPlanner.travelplanning.controllers;
 
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
+import com.example.TravelPlanner.common.utils.annotations.ValidTravelPlanId;
 import com.example.TravelPlanner.common.utils.annotations.ValidVotingId;
 import com.example.TravelPlanner.travelplanning.dto.voting.*;
 import com.example.TravelPlanner.travelplanning.services.VotingService;
@@ -25,7 +26,7 @@ public class VotingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VotingPreviewDTO>> getVotings(@PathVariable Long travelPlanId) {
+    public ResponseEntity<List<VotingPreviewDTO>> getVotings(@PathVariable @ValidTravelPlanId Long travelPlanId) {
         return ResponseEntity.ok().body(votingService.getVotingsByTravelPlan(travelPlanId));
     }
 
@@ -44,7 +45,7 @@ public class VotingController {
 
     // Delete voting
     @DeleteMapping("/{votingId}")
-    public ResponseEntity<Void> deleteVoting(@ValidVotingId @PathVariable Long votingId) {
+    public ResponseEntity<Void> deleteVoting(@PathVariable Long votingId) {
         // Implementation
         votingService.deleteVoting(votingId);
         return ResponseEntity.ok().build();
@@ -52,7 +53,7 @@ public class VotingController {
 
     // Make vote
     @PostMapping("/{votingId}/vote")
-    public ResponseEntity<Void> makeVote(@PathVariable @ValidVotingId Long votingId,
+    public ResponseEntity<Void> makeVote(@PathVariable Long votingId,
                                          @RequestBody VoteCreateDTO voteDto,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         votingService.makeVote(voteDto, votingId, customUserDetails.getId());

@@ -2,6 +2,7 @@ package com.example.TravelPlanner.travelplanning.services;
 
 import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.common.exceptions.custom.AlreadyVotedException;
+import com.example.TravelPlanner.common.exceptions.custom.OverlappingEventsException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EventNotFoundException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.VotingNotFoundException;
 import com.example.TravelPlanner.common.utils.MappingSupport;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -68,7 +70,7 @@ public class VotingServiceImpl implements VotingService{
                 event.getStartTime()
         );
         if (!overlappingEvents.isEmpty()){
-            //
+            throw new OverlappingEventsException();
         }
         Voting voting = votingMapper.mapVotingCreateDTOtoVoting(votingCreateDTO,userId);
         voting = mappingSupport.getVotingRepository().save(voting);

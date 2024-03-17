@@ -20,7 +20,6 @@ public class TravelPlanIdValidator implements ConstraintValidator<ValidTravelPla
 
     @Override
     public boolean isValid(Long travelPlanId, ConstraintValidatorContext context) {
-        System.out.println("HELELELEL");
         if (travelPlanId == null || !travelPlanRepository.existsById(travelPlanId)) {
             return false;
         }
