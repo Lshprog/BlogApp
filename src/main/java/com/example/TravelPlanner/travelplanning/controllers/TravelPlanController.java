@@ -25,6 +25,7 @@ public class TravelPlanController {
 
     @GetMapping
     public ResponseEntity<List<TravelPlanPreviewDTO>> getAllTravelPlansForUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        System.out.println(customUserDetails.getId().toString());
         return ResponseEntity.ok().body(travelPlanService.listAllTravelPlansByUser(customUserDetails.getId()));
     }
 

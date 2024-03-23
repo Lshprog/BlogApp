@@ -14,6 +14,9 @@ import java.util.UUID;
 
 public interface UserPlanRolesRepository extends JpaRepository<UserPlanRoles, Long> {
 
+    @Query("SELECT upr.travelPlan FROM UserPlanRoles upr WHERE upr.user.id = :userId")
+    List<TravelPlan> findTravelPlansByUserId(@Param(value = "userId") UUID userId);
+
     Optional<PlanRole> findUserPlanRoleByUserAndTravelPlan(User user, TravelPlan travelPlan);
 
     Optional<UserPlanRoles> findUserPlanRolesByTravelPlanAndRole(TravelPlan travelPlan, PlanRole planRole);
@@ -23,8 +26,8 @@ public interface UserPlanRolesRepository extends JpaRepository<UserPlanRoles, Lo
                                                          @Param(value = "userId") UUID userId);
 
     @Query("SELECT CASE WHEN COUNT(upr) > 0 THEN true ELSE false END FROM UserPlanRoles upr WHERE upr.travelPlan.id = :travelPlanId AND upr.user.id = :userId")
-    boolean existsByUserIdAndTravelPlanId(@Param(value = "travelPlanId") Long travelPlanId,
-                                          @Param(value = "userId") UUID userId);
+    boolean existsByUserIdAndTravelPlanId(@Param(value = "userId") UUID userId,
+                                          @Param(value = "travelPlanId") Long travelPlanId);
 
     void deleteByTravelPlanAndUser(TravelPlan travelPlan, User user);
 

@@ -37,7 +37,7 @@ public class TravelPlanMembershipFilter extends OncePerRequestFilter {
                 return;
             }
             CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if(userPlanRolesRepository.existsByUserIdAndTravelPlanId(travelPlanId, principal.getId())){
+            if(userPlanRolesRepository.existsByUserIdAndTravelPlanId(principal.getId(), travelPlanId)){
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "User is not part of the travel plan");
                 return;
             }

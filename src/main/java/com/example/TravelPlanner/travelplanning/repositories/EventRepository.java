@@ -15,6 +15,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findEventsByTravelPlanId(Long planId);
 
+    List<Event> findEventsByTravelPlanIdAndOrderByPlaceStatus(Long planId);
+
     @Modifying
     @Query("UPDATE Event e SET e.placeStatus = :newStatus WHERE e.travelPlan.id = :travelPlanId AND e.placeStatus = :currentStatus AND e.startTime > :startTime AND e.endTime < :endTime")
     void updateEventStatusByTravelPlanAndTime(@Param("travelPlanId") Long travelPlanId,

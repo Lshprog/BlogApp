@@ -1,7 +1,7 @@
 package com.example.TravelPlanner.travelplanning.services;
 
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EventNotFoundException;
-import com.example.TravelPlanner.common.utils.MappingSupport;
+import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.dto.event.EventCreateDTO;
@@ -22,17 +22,17 @@ import java.util.UUID;
 @Validated
 public class EventServiceImpl implements EventService{
 
-    private final MappingSupport mappingSupport;
+    private final CentralSupport centralSupport;
     private final EventMapper eventMapper;
 
     @Override
     public List<EventDTO> listAllEventsByTravelPlan(Long planId) {
-        return mappingSupport.getMapperUtil().mapList(mappingSupport.getEventRepository().findNotSomePlaceStatusEvents(planId, PlaceStatus.VOTING), eventMapper::mapEventToEventDTO);
+        return centralSupport.getMapperUtil().mapList(centralSupport.getEventRepository().findNotSomePlaceStatusEvents(planId, PlaceStatus.VOTING), eventMapper::mapEventToEventDTO);
     }
 
     @Override
     public EventDTO getEventById(Long eventId) {
-        Optional<Event> optionalEvent = mappingSupport.getEventRepository().findById(eventId);
+        Optional<Event> optionalEvent = centralSupport.getEventRepository().findById(eventId);
         if (optionalEvent.isEmpty()){
             throw new EventNotFoundException(eventId);
         }
@@ -43,7 +43,7 @@ public class EventServiceImpl implements EventService{
     @Transactional
     public EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, UUID userId, Long travelPlanId) {
         Event newEvent = eventMapper.mapEventCreateDTOtoEvent(eventCreateDTO, travelPlanId, userId);
-        newEvent = mappingSupport.getEventRepository().save(newEvent);
+        newEvent = centralSupport.getEventRepository().save(newEvent);
         return eventMapper.mapEventToEventDTO(newEvent);
     }
 
@@ -56,10 +56,10 @@ public class EventServiceImpl implements EventService{
 //            throw new EventNotFoundException(eventDTO.getId());
 //        }
 //        Event event = eventOptional.get();
-        Event event = mappingSupport.getEventRepository().findById(eventDTO.getId()).get();
+        Event event = centralSupport.getEventRepository().findById(eventDTO.getId()).get();
         if(eventDTO.getPlaceStatus() == PlaceStatus.CONCRETE &&
                 (event.getPlaceStatus() == PlaceStatus.SUGGESTED || event.getPlaceStatus() == PlaceStatus.VOTING)) {
-            mappingSupport.getEventRepository().updateEventStatusByTravelPlanAndTime(
+            centralSupport.getEventRepository().updateEventStatusByTravelPlanAndTime(
                     travelPlanId,
                     event.getPlaceStatus(),
                     event.getPlaceStatus(),
@@ -77,13 +77,13 @@ public class EventServiceImpl implements EventService{
         event.setDescription(eventDTO.getDescription());
         event.setStartTime(eventDTO.getStartTime());
         event.setEndTime(eventDTO.getEndTime());
-        mappingSupport.getEventRepository().save(event);
+        centralSupport.getEventRepository().save(event);
     }
 
     @Override
     @Transactional
     public void deleteEvent(Long eventId) {
-        mappingSupport.getEventRepository().deleteById(eventId);
+        centralSupport.getEventRepository().deleteById(eventId);
     }
 
 }

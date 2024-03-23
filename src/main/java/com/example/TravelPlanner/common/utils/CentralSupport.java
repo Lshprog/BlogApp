@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class MappingSupport {
+public class CentralSupport {
 
     private final MapperUtil mapperUtil;
     private final UserRepository userRepository;

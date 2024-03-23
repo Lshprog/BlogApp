@@ -1,6 +1,9 @@
 package com.example.TravelPlanner.auth.config;
 
+import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -29,7 +32,7 @@ public class JwtService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public String extractUsername(String jwtToken) {
+    public String extractUserId(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }
 
@@ -53,12 +56,7 @@ public class JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    public boolean validateToken(String jwtToken, UserDetails userDetails) {
-        final String username = extractUsername(jwtToken);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(jwtToken);
-    }
-
-    private boolean isTokenExpired(String jwtToken) {
+    private boolean isTokenExpired(String jwtToken) throws ExpiredJwtException {
         return extractExpiration(jwtToken).before(new Date());
     }
 
@@ -66,7 +64,7 @@ public class JwtService {
         return extractClaim(jwtToken, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String jwtToken) {
+    private Claims extractAllClaims(String jwtToken) throws JwtException {
         return Jwts.parser()
                 .verifyWith(getSecretSigningKey())
                 .build()
@@ -97,6 +95,10 @@ public class JwtService {
     public boolean isTokenBlacklisted(String token) {
         Boolean isBlacklisted = redisTemplate.hasKey("BL_" + token);
         return Boolean.TRUE.equals(isBlacklisted);
+    }
+
+    public boolean validateToken(String token) {
+        return (!isTokenExpired(token) && !isTokenBlacklisted(token));
     }
 
 }

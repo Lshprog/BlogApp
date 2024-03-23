@@ -1,6 +1,7 @@
 package com.example.TravelPlanner.common.config;
 
 import com.example.TravelPlanner.auth.UserRepository;
+import com.example.TravelPlanner.auth.entities.AuthUserDetails;
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
@@ -23,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,7 +47,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> modelMapper.map(userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found")), CustomUserDetails.class);
+        return username -> modelMapper.map(userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found")), AuthUserDetails.class);
     }
 
     @Bean

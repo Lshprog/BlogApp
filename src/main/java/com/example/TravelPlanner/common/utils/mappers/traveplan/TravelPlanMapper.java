@@ -1,7 +1,7 @@
 package com.example.TravelPlanner.common.utils.mappers.traveplan;
 
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.UserNotFoundException;
-import com.example.TravelPlanner.common.utils.MappingSupport;
+import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
@@ -17,31 +17,31 @@ import java.util.UUID;
 public class TravelPlanMapper {
 
 
-    private final MappingSupport mappingSupport;
+    private final CentralSupport centralSupport;
     private final EventMapper eventMapper;
 
     public TravelPlanDTO mapTravelPlanToTravelPlanDTO(TravelPlan travelPlan) {
-        TravelPlanDTO travelPlanDTO = mappingSupport.getMapperUtil().map(travelPlan, TravelPlanDTO.class);
-        travelPlanDTO.setEvents(mappingSupport.getMapperUtil().mapList(travelPlan.getEvents(), eventMapper::mapEventToEventDTO));
+        TravelPlanDTO travelPlanDTO = centralSupport.getMapperUtil().map(travelPlan, TravelPlanDTO.class);
+        travelPlanDTO.setEvents(centralSupport.getMapperUtil().mapList(travelPlan.getEvents(), eventMapper::mapEventToEventDTO));
         travelPlanDTO.setCreator(travelPlan.getOwner().getUsername());
         return travelPlanDTO;
     }
 
     public TravelPlanPreviewDTO mapTravelPlanToTravelPlanPreviewDTO(TravelPlan travelPlan) {
-        return mappingSupport.getMapperUtil().map(travelPlan, TravelPlanPreviewDTO.class);
+        return centralSupport.getMapperUtil().map(travelPlan, TravelPlanPreviewDTO.class);
     }
 
     public TravelPlan mapTravelPlanDTOToTravelPlan(TravelPlanDTO travelPlanDTO) {
-        TravelPlan travelPlan = mappingSupport.getMapperUtil().map(travelPlanDTO, TravelPlan.class);
-        travelPlan.setEvents(mappingSupport.getMapperUtil().mapList(travelPlanDTO.getEvents(), eventDTO ->  eventMapper.mapEventDTOToEvent(eventDTO, travelPlanDTO.getId())));
-        travelPlan.setOwner(mappingSupport.getUserRepository().findByUsername(travelPlanDTO.getCreator())
+        TravelPlan travelPlan = centralSupport.getMapperUtil().map(travelPlanDTO, TravelPlan.class);
+        travelPlan.setEvents(centralSupport.getMapperUtil().mapList(travelPlanDTO.getEvents(), eventDTO ->  eventMapper.mapEventDTOToEvent(eventDTO, travelPlanDTO.getId())));
+        travelPlan.setOwner(centralSupport.getUserRepository().findByUsername(travelPlanDTO.getCreator())
                 .orElseThrow(() -> new UserNotFoundException(travelPlanDTO.getCreator())));
         return travelPlan;
     }
 
     public TravelPlan mapTravelPlanCreateDTOToTravelPlan(TravelPlanCreateDTO travelPlanDTO, UUID userId) {
-        TravelPlan travelPlan = mappingSupport.getMapperUtil().map(travelPlanDTO, TravelPlan.class);
-        travelPlan.setOwner(mappingSupport.getUserRepository().getReferenceById(userId));
+        TravelPlan travelPlan = centralSupport.getMapperUtil().map(travelPlanDTO, TravelPlan.class);
+        travelPlan.setOwner(centralSupport.getUserRepository().getReferenceById(userId));
         return travelPlan;
     }
 }

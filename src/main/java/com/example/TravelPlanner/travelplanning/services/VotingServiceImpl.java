@@ -1,17 +1,14 @@
 package com.example.TravelPlanner.travelplanning.services;
 
-import com.example.TravelPlanner.auth.entities.User;
-import com.example.TravelPlanner.common.exceptions.custom.AlreadyVotedException;
 import com.example.TravelPlanner.common.exceptions.custom.OverlappingEventsException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EventNotFoundException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.VotingNotFoundException;
-import com.example.TravelPlanner.common.utils.MappingSupport;
+import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.voting.VoteMapper;
 import com.example.TravelPlanner.common.utils.mappers.voting.VotingMapper;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.dto.voting.*;
 import com.example.TravelPlanner.travelplanning.entities.Event;
-import com.example.TravelPlanner.travelplanning.entities.Vote;
 import com.example.TravelPlanner.travelplanning.entities.Voting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,13 +25,13 @@ import java.util.UUID;
 @Validated
 public class VotingServiceImpl implements VotingService{
 
-    private final MappingSupport mappingSupport;
+    private final CentralSupport centralSupport;
     private final VotingMapper votingMapper;
     private final VoteMapper voteMapper;
 
     @Override
     public VotingDTO getVotingById(Long votingId) {
-        Optional<Voting> optionalVoting = mappingSupport.getVotingRepository().findById(votingId);
+        Optional<Voting> optionalVoting = centralSupport.getVotingRepository().findById(votingId);
         if (optionalVoting.isEmpty()) {
             throw new VotingNotFoundException("No such voting");
         }
@@ -44,26 +40,26 @@ public class VotingServiceImpl implements VotingService{
 
     @Override
     public void deleteVoting(Long votingId) {
-        Optional<Voting> optionalVoting = mappingSupport.getVotingRepository().findById(votingId);
+        Optional<Voting> optionalVoting = centralSupport.getVotingRepository().findById(votingId);
         if (optionalVoting.isEmpty()) {
             throw new VotingNotFoundException("No such voting");
         }
         Voting voting = optionalVoting.get();
         voting.getEvent().setPlaceStatus(PlaceStatus.SUGGESTED);
-        mappingSupport.getEventRepository().save(voting.getEvent());
-        mappingSupport.getVotingRepository().deleteById(votingId);
+        centralSupport.getEventRepository().save(voting.getEvent());
+        centralSupport.getVotingRepository().deleteById(votingId);
 
     }
 
     @Override
     @Transactional
     public VotingDTO createNewVoting(VotingCreateDTO votingCreateDTO, UUID userId) {
-        Optional<Event> optionalEvent = mappingSupport.getEventRepository().findById(votingCreateDTO.getEventId());
+        Optional<Event> optionalEvent = centralSupport.getEventRepository().findById(votingCreateDTO.getEventId());
         if(optionalEvent.isEmpty()){
             throw new EventNotFoundException(votingCreateDTO.getEventId());
         }
         Event event = optionalEvent.get();
-        List<Event> overlappingEvents = mappingSupport.getEventRepository().findEventsByTravelPlanAndTimeAndPlaceStatus(
+        List<Event> overlappingEvents = centralSupport.getEventRepository().findEventsByTravelPlanAndTimeAndPlaceStatus(
                 event.getTravelPlan().getId(),
                 PlaceStatus.VOTING,
                 event.getStartTime(),
@@ -73,9 +69,9 @@ public class VotingServiceImpl implements VotingService{
             throw new OverlappingEventsException();
         }
         Voting voting = votingMapper.mapVotingCreateDTOtoVoting(votingCreateDTO,userId);
-        voting = mappingSupport.getVotingRepository().save(voting);
+        voting = centralSupport.getVotingRepository().save(voting);
         event.setPlaceStatus(PlaceStatus.VOTING);
-        mappingSupport.getEventRepository().save(event);
+        centralSupport.getEventRepository().save(event);
         return votingMapper.mapVotingToVotingDto(voting);
     }
 
@@ -84,11 +80,11 @@ public class VotingServiceImpl implements VotingService{
     @Transactional
     @PreAuthorize("@permissionSecurityService.hasVotePermission(#votingId, #userId)")
     public void makeVote(VoteCreateDTO voteCreateDTO, Long votingId, UUID userId) {
-        mappingSupport.getVotesRepository().save(voteMapper.mapVoteCreateDTOToVote(voteCreateDTO, votingId, userId));
+        centralSupport.getVotesRepository().save(voteMapper.mapVoteCreateDTOToVote(voteCreateDTO, votingId, userId));
     }
 
     @Override
     public List<VotingPreviewDTO> getVotingsByTravelPlan(Long travelPlanId) {
-        return mappingSupport.getMapperUtil().mapList(mappingSupport.getVotingRepository().findVotingsByTravelPlanId(travelPlanId), votingMapper::mapVotingToVotingPreviewDto);
+        return centralSupport.getMapperUtil().mapList(centralSupport.getVotingRepository().findVotingsByTravelPlanId(travelPlanId), votingMapper::mapVotingToVotingPreviewDto);
     }
 }
