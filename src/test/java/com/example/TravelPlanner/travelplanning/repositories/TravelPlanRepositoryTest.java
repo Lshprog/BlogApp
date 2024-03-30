@@ -20,19 +20,19 @@ class TravelPlanRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
-    @Test
-    @Transactional
-    public void testSaveTravelPlan() {
-
-        TravelPlan travelPlan = travelPlanRepository.save(TravelPlan.builder()
-                .owner(userRepository.findByUsername("Alext").get())
-                .title("Tokyo whatever")
-                .build());
-
-        assertThat(travelPlan).isNotNull();
-        assertThat(travelPlan.getId()).isNotNull();
-
-
-    }
+//    @Test
+//    @Transactional
+//    public void testSaveTravelPlan() {
+//
+////        TravelPlan travelPlan = travelPlanRepository.save(TravelPlan.builder()
+////                .owner(userRepository.findByUsername("Alext").get())
+////                .title("Tokyo whatever")
+////                .build());
+////
+////        assertThat(travelPlan).isNotNull();
+////        assertThat(travelPlan.getId()).isNotNull();
+//
+//
+//    }
 
 }

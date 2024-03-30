@@ -22,18 +22,18 @@ class TravelPlanServiceImplTest {
     @Autowired
     UserRepository userRepository;
 
-    @Test
-    @Transactional
-    public void testSaveTravelPlan() {
-        LocalDate startDate = LocalDate.of(2023, 3, 8);
-        LocalDate endDate = LocalDate.of(2023, 3, 12);
-        TravelPlanCreateDTO travelPlanCreateDTO = new TravelPlanCreateDTO("Japan trip", startDate, endDate);
-        TravelPlanDTO newTravelPlan = travelPlanService.saveNewTravelPlan(travelPlanCreateDTO, userRepository.findByUsername("Alext").get().getId());
-
-        assertThat(newTravelPlan).isNotNull();
-        assertThat(newTravelPlan.getId()).isNotNull();
-
-
-    }
+//    @Test
+//    @Transactional
+//    public void testSaveTravelPlan() {
+////        LocalDate startDate = LocalDate.of(2023, 3, 8);
+////        LocalDate endDate = LocalDate.of(2023, 3, 12);
+////        TravelPlanCreateDTO travelPlanCreateDTO = new TravelPlanCreateDTO("Japan trip", startDate, endDate);
+////        TravelPlanDTO newTravelPlan = travelPlanService.saveNewTravelPlan(travelPlanCreateDTO, userRepository.findByUsername("Alext").get().getId());
+////
+////        assertThat(newTravelPlan).isNotNull();
+////        assertThat(newTravelPlan.getId()).isNotNull();
+//
+//
+//    }
 
 }

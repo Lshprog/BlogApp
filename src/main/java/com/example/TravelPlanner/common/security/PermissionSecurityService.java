@@ -45,7 +45,4 @@ public class PermissionSecurityService {
         return true;
     }
 
-//    public boolean hasVotingCreatorPermission(Long votingId, UUID userId) {
-//        return votingRepository
-//    }
 }

@@ -7,6 +7,7 @@ import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanPreviewDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanUpdateDTO;
 import com.example.TravelPlanner.travelplanning.services.TravelPlanService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/v1/travelplans")
 @RequiredArgsConstructor
 @Validated
+@SecurityRequirement(name = "bearerAuth")
 public class TravelPlanController {
 
     private final TravelPlanService travelPlanService;

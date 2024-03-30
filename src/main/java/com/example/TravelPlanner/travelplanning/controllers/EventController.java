@@ -4,6 +4,9 @@ import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.travelplanning.dto.event.EventCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
 import com.example.TravelPlanner.travelplanning.services.EventService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/v1/travelplans/{travelPlanId}/events")
 @RequiredArgsConstructor
 @Validated

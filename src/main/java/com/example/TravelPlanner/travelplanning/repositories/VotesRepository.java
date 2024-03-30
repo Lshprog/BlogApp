@@ -6,9 +6,11 @@ import com.example.TravelPlanner.travelplanning.entities.Voting;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+@Repository
 public interface VotesRepository extends JpaRepository<Vote, Long> {
 
     Vote findByCreatorAndVoting(User creator, Voting voting);

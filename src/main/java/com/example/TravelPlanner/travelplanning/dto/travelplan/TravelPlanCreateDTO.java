@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class TravelPlanCreateDTO implements Serializable {
     @NotBlank
     private String title;

@@ -5,6 +5,7 @@ import com.example.TravelPlanner.common.utils.annotations.ValidTravelPlanId;
 import com.example.TravelPlanner.common.utils.annotations.ValidVotingId;
 import com.example.TravelPlanner.travelplanning.dto.voting.*;
 import com.example.TravelPlanner.travelplanning.services.VotingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/v1/travelplans/{travelPlanId}/voting")
 @RequiredArgsConstructor
 @Validated
+@SecurityRequirement(name = "bearerAuth")
 public class VotingController {
 
     private final VotingService votingService;

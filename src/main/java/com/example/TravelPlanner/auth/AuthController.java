@@ -1,6 +1,8 @@
 package com.example.TravelPlanner.auth;
 
 import com.example.TravelPlanner.auth.common.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/log-out")
+    @Operation(security = {@SecurityRequirement(name = "bearerAuth")})
     public ResponseEntity<LogoutResponse> logout(
             @RequestHeader("Authorization") String tokenHeader
     ) {

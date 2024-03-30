@@ -1,5 +1,7 @@
 package com.example.TravelPlanner.travelplanning.services;
 
+import com.example.TravelPlanner.common.exceptions.custom.BadRequest;
+import com.example.TravelPlanner.common.exceptions.custom.OverlappingEventsException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EventNotFoundException;
 import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
@@ -12,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +45,24 @@ public class EventServiceImpl implements EventService{
     @Override
     @Transactional
     public EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, UUID userId, Long travelPlanId) {
-        Event newEvent = eventMapper.mapEventCreateDTOtoEvent(eventCreateDTO, travelPlanId, userId);
-        newEvent = centralSupport.getEventRepository().save(newEvent);
-        return eventMapper.mapEventToEventDTO(newEvent);
+        if(eventCreateDTO.getStartTime().compareTo(eventCreateDTO.getEndTime()) > -1){
+            throw new BadRequest("Invalid dates");
+        }
+        if (eventCreateDTO.getPlaceStatus() == PlaceStatus.CONCRETE && !centralSupport.getEventRepository().findEventsByTravelPlanAndTimeAndPlaceStatus(
+                travelPlanId,
+                PlaceStatus.CONCRETE,
+                eventCreateDTO.getStartTime(),
+                eventCreateDTO.getEndTime())
+                .isEmpty()
+        ) {
+            throw new OverlappingEventsException();
+
+        } else {
+            Event newEvent = eventMapper.mapEventCreateDTOtoEvent(eventCreateDTO, travelPlanId, userId);
+            newEvent = centralSupport.getEventRepository().save(newEvent);
+            return eventMapper.mapEventToEventDTO(newEvent);
+        }
+
     }
 
     @Transactional
