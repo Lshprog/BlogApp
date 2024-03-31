@@ -2,6 +2,7 @@ package com.example.TravelPlanner.auth.config;
 
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.common.utils.mappers.MapperUtil;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = authHeader.substring(7);
 
             if (jwtService.validateToken(jwt)) {
-                String userId = jwtService.extractUserId(jwt); // Assumes extractUserId doesn't require validation again
+                String userId = jwtService.extractUserId(jwt);
                 UUID userUuid = UUID.fromString(userId);
                 CustomUserDetails userDetails = new CustomUserDetails(userUuid);
 

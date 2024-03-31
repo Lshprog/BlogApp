@@ -7,6 +7,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,7 +57,7 @@ public class JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    private boolean isTokenExpired(String jwtToken) throws ExpiredJwtException {
+    private boolean isTokenExpired(String jwtToken) {
         return extractExpiration(jwtToken).before(new Date());
     }
 

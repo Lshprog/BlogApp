@@ -3,6 +3,7 @@ package com.example.TravelPlanner.common.config;
 import com.example.TravelPlanner.auth.config.JwtAuthenticationFilter;
 import com.example.TravelPlanner.common.filters.TravelPlanMembershipFilter;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -24,6 +25,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final TravelPlanMembershipFilter travelPlanMembershipFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,6 +34,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers(
+                            "api/v1/connection/**",
                             "/api/v1/auth/authenticate",
                             "/api/v1/auth/register",
                             "/api-docs/**",
@@ -44,6 +47,7 @@ public class SecurityConfiguration {
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
                 .addFilterAfter(travelPlanMembershipFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
