@@ -48,8 +48,8 @@ public class TravelPlanController {
         return ResponseEntity.ok().body(travelPlanService.generateNewInviteLink(travelPlanId));
     }
 
-    @PostMapping("/join")
-    public ResponseEntity<TravelPlanDTO> joinTravelPlanByLink(@RequestBody String joinLink,
+    @PostMapping("/join/{joinLink}")
+    public ResponseEntity<TravelPlanDTO> joinTravelPlanByLink(@PathVariable String joinLink,
                                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok().body(travelPlanService.joinTravelPlan(joinLink, customUserDetails.getId()));
     }
