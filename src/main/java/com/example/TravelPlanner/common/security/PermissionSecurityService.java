@@ -27,7 +27,7 @@ public class PermissionSecurityService {
     private final VotesRepository votesRepository;
 
     public boolean hasEditorPermission(Long travelPlanId, UUID userId) {
-        return (userPlanRolesRepository.getUserPlanRoleByUserIdAndTravelPlanId(travelPlanId, userId).getRole() != PlanRole.VOTER);
+        return (userPlanRolesRepository.getUserPlanRoleByUserIdAndTravelPlanId(travelPlanId, userId).getRole() != PlanRole.EDITOR);
     }
 
     public boolean hasOwnerPermission(Long travelPlanId, UUID userId) {

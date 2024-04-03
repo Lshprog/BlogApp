@@ -44,7 +44,7 @@ public class EventServiceImpl implements EventService{
 
     @Override
     @Transactional
-    public EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, UUID userId, Long travelPlanId) {
+    public EventDTO saveNewEvent(EventCreateDTO eventCreateDTO, Long travelPlanId, UUID userId) {
         if(eventCreateDTO.getStartTime().compareTo(eventCreateDTO.getEndTime()) > -1){
             throw new BadRequest("Invalid dates");
         }
@@ -67,8 +67,8 @@ public class EventServiceImpl implements EventService{
 
     @Transactional
     @Override
-    @PreAuthorize("@permissionSecurityService.hasEventCreatorPermission(#eventDTO.id, #travelPlanId)")
-    public void updateEvent(EventDTO eventDTO, Long travelPlanId) {
+    @PreAuthorize("@permissionSecurityService.hasEditorPermission(#travelPlanId, #userId)")
+    public void updateEvent(EventDTO eventDTO, Long travelPlanId, UUID userId) {
 //        Optional<Event> eventOptional = mappingSupport.getEventRepository().findById(eventDTO.getId());
 //        if(eventOptional.isEmpty()){
 //            throw new EventNotFoundException(eventDTO.getId());

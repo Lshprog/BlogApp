@@ -52,6 +52,12 @@ public class VotingController {
         votingService.deleteVoting(votingId);
         return ResponseEntity.ok().build();
     }
+    @DeleteMapping("/clear")
+    public ResponseEntity<Void> clearVotingHistory(@PathVariable Long votingId) {
+        // Implementation
+        votingService.deleteVoting(votingId);
+        return ResponseEntity.ok().build();
+    }
 
     // Make vote
     @PostMapping("/{votingId}/vote")

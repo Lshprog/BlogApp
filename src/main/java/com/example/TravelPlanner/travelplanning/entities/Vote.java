@@ -32,9 +32,6 @@ public class Vote implements Serializable {
     @NotNull
     private Voting voting;
 
-    @Column(name = "description")
-    private String description;
-
     @Column(name = "is_liked")
     @NotNull
     private Boolean isLiked;

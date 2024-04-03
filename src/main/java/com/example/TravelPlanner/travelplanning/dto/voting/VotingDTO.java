@@ -25,6 +25,7 @@ public class VotingDTO implements Serializable {
     @NotNull
     private EventDTO event;
 
-    private List<VoteDTO> votes;
+    private Integer likes;
+    private Integer dislikes;
 
 }

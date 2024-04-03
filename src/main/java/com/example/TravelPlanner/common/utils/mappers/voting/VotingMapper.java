@@ -2,6 +2,7 @@ package com.example.TravelPlanner.common.utils.mappers.voting;
 
 import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
+import com.example.TravelPlanner.travelplanning.dto.voting.VoteDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingPreviewDTO;
@@ -9,6 +10,7 @@ import com.example.TravelPlanner.travelplanning.entities.Voting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -21,7 +23,15 @@ public class VotingMapper {
     public VotingDTO mapVotingToVotingDto(Voting voting) {
         VotingDTO votingDTO = centralSupport.getMapperUtil().map(voting, VotingDTO.class);
         votingDTO.setCreator(voting.getCreator().getUsername());
-        votingDTO.setVotes(centralSupport.getMapperUtil().mapList(voting.getVotes(), voteMapper::mapVoteToVoteDto));
+        List<VoteDTO> votes = centralSupport.getMapperUtil().mapList(voting.getVotes(), voteMapper::mapVoteToVoteDto);
+        Integer likes = 0;
+        Integer dislikes = 0;
+        for(VoteDTO vote : votes){
+            if(vote.getIsLiked()) likes++;
+            else dislikes++;
+        }
+        votingDTO.setLikes(likes);
+        votingDTO.setDislikes(dislikes);
         votingDTO.setEvent(eventMapper.mapEventToEventDTO(voting.getEvent()));
         return votingDTO;
     }

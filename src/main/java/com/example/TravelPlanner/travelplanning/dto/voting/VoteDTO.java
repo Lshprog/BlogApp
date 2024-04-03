@@ -16,9 +16,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class VoteDTO implements Serializable {
+
     private String creator;
-    
-    private String description;
 
     private Boolean isLiked;
 

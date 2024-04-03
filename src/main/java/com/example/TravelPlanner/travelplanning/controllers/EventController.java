@@ -37,7 +37,7 @@ public class EventController {
     public ResponseEntity<EventDTO> createEvent(@PathVariable Long travelPlanId,
                                                 @RequestBody EventCreateDTO eventDTO,
                                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return ResponseEntity.ok().body(eventService.saveNewEvent(eventDTO, customUserDetails.getId(), travelPlanId));
+        return ResponseEntity.ok().body(eventService.saveNewEvent(eventDTO, travelPlanId, customUserDetails.getId()));
     }
 
 
@@ -45,8 +45,8 @@ public class EventController {
     @PutMapping("/{eventId}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable Long travelPlanId,
                                                 @PathVariable Long eventId,
-                                                @RequestBody EventDTO eventDto) {
-        eventService.updateEvent(eventDto, travelPlanId);
+                                                @RequestBody EventDTO eventDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        eventService.updateEvent(eventDto, travelPlanId, customUserDetails.getId());
         return ResponseEntity.ok().build();
     }
 

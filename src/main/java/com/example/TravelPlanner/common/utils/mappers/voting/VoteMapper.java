@@ -18,7 +18,6 @@ public class VoteMapper {
     public VoteDTO mapVoteToVoteDto(Vote vote) {
         return VoteDTO.builder()
                 .creator(vote.getCreator().getUsername())
-                .description(vote.getDescription())
                 .isLiked(vote.getIsLiked())
                 .build();
     }
