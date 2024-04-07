@@ -56,7 +56,6 @@ public class EventServiceImpl implements EventService{
                 .isEmpty()
         ) {
             throw new OverlappingEventsException();
-
         }
         Event newEvent = eventMapper.mapEventCreateDTOtoEvent(eventCreateDTO, travelPlanId, userId);
         newEvent = centralSupport.getEventRepository().save(newEvent);
@@ -67,18 +66,20 @@ public class EventServiceImpl implements EventService{
     @Override
     public void updateEvent(EventDTO eventDTO, Long travelPlanId, UUID userId) {
         Event event = checkService.checkEventExistence(eventDTO.getId());
+        if(event.getPlaceStatus() == PlaceStatus.VOTING){
+            throw new RuntimeException();
+        }
         if(event.getCreator().getId() == userId || event.getTravelPlan().getOwner().getId() == userId){
             if(eventDTO.getPlaceStatus() == PlaceStatus.CONCRETE &&
-                    (event.getPlaceStatus() == PlaceStatus.SUGGESTED || event.getPlaceStatus() == PlaceStatus.VOTING)) {
+                    (event.getPlaceStatus() == PlaceStatus.SUGGESTED)) {
                 centralSupport.getEventRepository().updateEventStatusByTravelPlanAndTime(
                         travelPlanId,
-                        event.getPlaceStatus(),
+                        PlaceStatus.CONCRETE,
                         event.getPlaceStatus(),
                         event.getStartTime(),
                         event.getEndTime()
                 );
                 event.setPlaceStatus(PlaceStatus.CONCRETE);
-
             } else {
                 event.setPlaceStatus(PlaceStatus.SUGGESTED);
             }

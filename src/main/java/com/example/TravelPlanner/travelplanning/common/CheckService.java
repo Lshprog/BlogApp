@@ -5,13 +5,17 @@ import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EventNo
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.TravelPlanNotFoundException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.VotingNotFoundException;
 import com.example.TravelPlanner.common.utils.CentralSupport;
+import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
+import com.example.TravelPlanner.travelplanning.dto.voting.VoteDTO;
 import com.example.TravelPlanner.travelplanning.entities.Event;
 import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
+import com.example.TravelPlanner.travelplanning.entities.Vote;
 import com.example.TravelPlanner.travelplanning.entities.Voting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -65,6 +69,28 @@ public class CheckService {
     }
 
     public void checkVotingResults(Long votingId) {
+        Voting voting = centralSupport.getVotingRepository().findById(votingId).get();
+        List<Vote> votes = voting.getVotes();
+        Integer likes = 0;
+        Integer dislikes = 0;
+        for(Vote vote : votes){
+            if(vote.getIsLiked()) likes++;
+            else dislikes++;
+        }
+        Event event = voting.getEvent();
+        if((double) likes / (likes + dislikes) < 0.8) {
+            event.setPlaceStatus(PlaceStatus.SUGGESTED);
+        } else {
+            centralSupport.getEventRepository().updateEventStatusByTravelPlanAndTime(
+                    event.getTravelPlan().getId(),
+                    PlaceStatus.CONCRETE,
+                    PlaceStatus.SUGGESTED,
+                    event.getStartTime(),
+                    event.getEndTime()
+            );
+            event.setPlaceStatus(PlaceStatus.CONCRETE);
+        }
+        centralSupport.getEventRepository().save(event);
 
     }
 
