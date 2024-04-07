@@ -1,7 +1,5 @@
 package com.example.TravelPlanner.travelplanning.entities;
-
 import com.example.TravelPlanner.auth.entities.User;
-import com.example.TravelPlanner.travelplanning.common.enums.PlanRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,8 +10,8 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "plans_users")
-public class UserPlanRoles implements Serializable {
+@Table(name = "users_plans")
+public class UserPlan implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +27,5 @@ public class UserPlanRoles implements Serializable {
     @ToString.Exclude
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    private PlanRole role;
 
-    // Other fields and methods
 }
-

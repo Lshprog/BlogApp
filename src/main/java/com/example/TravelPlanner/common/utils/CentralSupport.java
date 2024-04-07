@@ -2,6 +2,7 @@ package com.example.TravelPlanner.common.utils;
 
 import com.example.TravelPlanner.auth.UserRepository;
 import com.example.TravelPlanner.common.utils.mappers.MapperUtil;
+import com.example.TravelPlanner.travelplanning.common.CheckService;
 import com.example.TravelPlanner.travelplanning.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ public class CentralSupport {
     private final TravelPlanRepository travelPlanRepository;
     private final VotingRepository votingRepository;
     private final VotesRepository votesRepository;
-    private final UserPlanRolesRepository userPlanRolesRepository;
+    private final UserPlanRepository userPlanRepository;
 
     // Getter methods for each dependency
     public MapperUtil getMapperUtil() {
@@ -43,8 +44,8 @@ public class CentralSupport {
         return votesRepository;
     }
 
-    public UserPlanRolesRepository getUserPlanRolesRepository() {
-        return userPlanRolesRepository;
+    public UserPlanRepository getUserPlanRepository() {
+        return userPlanRepository;
     }
 }
 

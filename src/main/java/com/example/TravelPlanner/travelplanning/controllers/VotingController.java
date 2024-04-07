@@ -1,8 +1,6 @@
 package com.example.TravelPlanner.travelplanning.controllers;
 
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
-import com.example.TravelPlanner.common.utils.annotations.ValidTravelPlanId;
-import com.example.TravelPlanner.common.utils.annotations.ValidVotingId;
 import com.example.TravelPlanner.travelplanning.dto.voting.*;
 import com.example.TravelPlanner.travelplanning.services.VotingService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,12 +21,12 @@ public class VotingController {
 
     private final VotingService votingService;
     @GetMapping("/{votingId}")
-    public ResponseEntity<VotingDTO> getVotingById(@ValidVotingId @PathVariable Long votingId) {
+    public ResponseEntity<VotingDTO> getVotingById(@PathVariable Long votingId) {
         return ResponseEntity.ok().body(votingService.getVotingById(votingId));
     }
 
     @GetMapping
-    public ResponseEntity<List<VotingPreviewDTO>> getVotings(@PathVariable @ValidTravelPlanId Long travelPlanId) {
+    public ResponseEntity<List<VotingPreviewDTO>> getVotings(@PathVariable Long travelPlanId) {
         return ResponseEntity.ok().body(votingService.getVotingsByTravelPlan(travelPlanId));
     }
 
@@ -53,9 +51,8 @@ public class VotingController {
         return ResponseEntity.ok().build();
     }
     @DeleteMapping("/clear")
-    public ResponseEntity<Void> clearVotingHistory(@PathVariable Long votingId) {
-        // Implementation
-        votingService.deleteVoting(votingId);
+    public ResponseEntity<Void> clearVotingHistory(@PathVariable Long travelPlanId) {
+        votingService.deleteFinishedVotings(travelPlanId);
         return ResponseEntity.ok().build();
     }
 

@@ -1,8 +1,8 @@
 package com.example.TravelPlanner.auth.entities;
 
 import com.example.TravelPlanner.travelplanning.entities.Event;
-import com.example.TravelPlanner.travelplanning.entities.UserPlanRoles;
 import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
+import com.example.TravelPlanner.travelplanning.entities.UserPlan;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,9 +10,6 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -52,8 +49,6 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private String profileImageUrl; // connect aws bucket and then save profile pics there
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
     @ToString.Exclude
     @Builder.Default
@@ -67,5 +62,6 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     @Builder.Default
-    private Set<UserPlanRoles> userPlanRoles = new HashSet<>();
+    private Set<UserPlan> userPlanRoles = new HashSet<>();
+
 }

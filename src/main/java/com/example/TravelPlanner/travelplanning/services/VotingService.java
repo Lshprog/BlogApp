@@ -17,4 +17,6 @@ public interface VotingService {
 
     List<VotingPreviewDTO> getVotingsByTravelPlan(Long travelPlanId);
 
+    void deleteFinishedVotings(Long travelPlanId);
+
 }

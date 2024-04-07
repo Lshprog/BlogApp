@@ -4,10 +4,11 @@ import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.common.exceptions.custom.*;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EntityNotFoundException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.TravelPlanNotFoundException;
+import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.UserNotFoundException;
 import com.example.TravelPlanner.common.utils.mappers.CommonUtils;
 import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.traveplan.TravelPlanMapper;
-import com.example.TravelPlanner.travelplanning.common.enums.PlanRole;
+import com.example.TravelPlanner.travelplanning.common.CheckService;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanPreviewDTO;
@@ -29,48 +30,38 @@ public class TravelPlanServiceImpl implements TravelPlanService{
 
     private final CentralSupport centralSupport;
     private final TravelPlanMapper travelPlanMapper;
+    private final CheckService checkService;
 
     @Override
     public List<TravelPlanPreviewDTO> listAllTravelPlansByUser(UUID userId) {
-        return centralSupport.getMapperUtil().mapList(centralSupport.getUserPlanRolesRepository().findTravelPlansByUserId(userId), TravelPlanPreviewDTO.class);
+        Optional<User> optionalUser = centralSupport.getUserRepository().findById(userId);
+        if(optionalUser.isEmpty()){
+            throw new UserNotFoundException(userId);
+        }
+        return centralSupport.getMapperUtil().mapList(optionalUser.get().getTravelPlans(), TravelPlanPreviewDTO.class);
     }
 
     @Override
     public TravelPlanDTO getTravelPlanById(Long travelPlanId) {
-        Optional<TravelPlan> optionalTravelPlan = centralSupport.getTravelPlanRepository().findById(travelPlanId);
-        if(optionalTravelPlan.isEmpty()) {
-            throw new TravelPlanNotFoundException(travelPlanId);
-        }
-        return travelPlanMapper.mapTravelPlanToTravelPlanDTO(optionalTravelPlan.get());
+        return travelPlanMapper.mapTravelPlanToTravelPlanDTO(centralSupport.getTravelPlanRepository().getReferenceById(travelPlanId));
     }
 
     @Override
-    public List<UserPlanRoles> findPlanUsers(Long travelPlanId) {
-        List<UserPlanRoles> planRoles = new ArrayList<>();
-        try{
-            planRoles = centralSupport.getUserPlanRolesRepository().findUserPlanRolesByTravelPlan(travelPlanId);
-        } catch (EntityNotFoundException e) {
-            throw new TravelPlanNotFoundException(travelPlanId);
-        }
-        return planRoles;
+    public List<String> findPlanUsers(Long travelPlanId) {
+        return centralSupport.getUserPlanRepository().findUsersByTravelPlan(travelPlanId);
     }
 
     @Override
     @Transactional
     public TravelPlanDTO joinTravelPlan(String joinCode, UUID userId) {
-        Optional<TravelPlan> optionalTravelPlan = centralSupport.getTravelPlanRepository().getTravelPlanByJoinCode(joinCode);
-        if (optionalTravelPlan.isEmpty()) {
-            throw new TravelPlanNotFoundException(joinCode);
-        }
-        TravelPlan travelPlan = optionalTravelPlan.get();
+        TravelPlan travelPlan = checkService.checkTravelPlanExistence(joinCode);
         User user = centralSupport.getUserRepository().getReferenceById(userId);
-        if (!centralSupport.getUserPlanRolesRepository().existsByUserIdAndTravelPlanId(user.getId(), travelPlan.getId())) {
-            UserPlanRoles userPlanRoles = UserPlanRoles.builder()
+        if (!centralSupport.getUserPlanRepository().existsByUserIdAndTravelPlanId(user.getId(), travelPlan.getId())) {
+            UserPlan userPlan = UserPlan.builder()
                     .travelPlan(travelPlan)
-                    .role(PlanRole.EDITOR)
                     .user(user)
                     .build();
-            centralSupport.getUserPlanRolesRepository().save(userPlanRoles);
+            centralSupport.getUserPlanRepository().save(userPlan);
         }
         return travelPlanMapper.mapTravelPlanToTravelPlanDTO(travelPlan);
     }
@@ -81,23 +72,17 @@ public class TravelPlanServiceImpl implements TravelPlanService{
         TravelPlan newTravelPlan = travelPlanMapper.mapTravelPlanCreateDTOToTravelPlan(travelPlanCreateDTO, userId);
         newTravelPlan.setJoinCode(CommonUtils.generateJoinLink());
         newTravelPlan = centralSupport.getTravelPlanRepository().save(newTravelPlan);
-        UserPlanRoles userPlanRoles = UserPlanRoles.builder()
-                .travelPlan(newTravelPlan)
-                .role(PlanRole.OWNER)
-                .user(centralSupport.getUserRepository().getReferenceById(userId))
-                .build();
-        centralSupport.getUserPlanRolesRepository().save(userPlanRoles);
+        UserPlan userPlan = new UserPlan();
+        userPlan.setTravelPlan(newTravelPlan);
+        userPlan.setUser(centralSupport.getUserRepository().getReferenceById(userId));
+        centralSupport.getUserPlanRepository().save(userPlan);
         return travelPlanMapper.mapTravelPlanToTravelPlanDTO(newTravelPlan);
     }
 
     @Transactional
     @Override
     public void updateTravelPlan(TravelPlanUpdateDTO travelPlanDTO, Long travelPlanId, UUID userId) {
-        Optional<TravelPlan> optionalTravelPlan = centralSupport.getTravelPlanRepository().findById(travelPlanId);
-        if(optionalTravelPlan.isEmpty()) {
-            throw new TravelPlanNotFoundException(travelPlanId);
-        }
-        TravelPlan curTravelPlan = optionalTravelPlan.get();
+        TravelPlan curTravelPlan = centralSupport.getTravelPlanRepository().findById(travelPlanId).get();
         curTravelPlan.setTitle(travelPlanDTO.getTitle());
         curTravelPlan.setStartDate(travelPlanDTO.getStartDate());
         curTravelPlan.setEndDate(travelPlanDTO.getEndDate());
@@ -108,21 +93,22 @@ public class TravelPlanServiceImpl implements TravelPlanService{
     @Override
     public void leaveTravelPlan(Long travelPlanId, UUID userId) {
         User user = centralSupport.getUserRepository().getReferenceById(userId);
-        TravelPlan travelPlan = centralSupport.getTravelPlanRepository().getReferenceById(travelPlanId);
-        PlanRole planRole = centralSupport.getUserPlanRolesRepository().findUserPlanRoleByUserAndTravelPlan(user, travelPlan).get();
-        if(planRole == PlanRole.OWNER){
-            Optional<UserPlanRoles> optionalUserPlanRoles = centralSupport.getUserPlanRolesRepository().findUserPlanRolesByTravelPlanAndRole(travelPlan, PlanRole.EDITOR);
-            if(optionalUserPlanRoles.isEmpty()){
+        TravelPlan travelPlan = centralSupport.getTravelPlanRepository().findById(travelPlanId).get();
+        if(Objects.equals(user.getUsername(), travelPlan.getOwner().getUsername())){
+            List<UserPlan> userPlans = centralSupport.getUserPlanRepository().findUserPlansByTravelPlan(travelPlanId);
+            if(userPlans.size() < 2){
                 centralSupport.getTravelPlanRepository().delete(travelPlan);
+                // maybe return here
             } else {
-                UserPlanRoles userPlanRoles = optionalUserPlanRoles.get();
-                userPlanRoles.setRole(PlanRole.OWNER);
-                centralSupport.getUserPlanRolesRepository().save(userPlanRoles);
+                 UserPlan curUserPlan = userPlans.get(1);
+                 if(Objects.equals(curUserPlan.getUser().getUsername(), user.getUsername())) curUserPlan = userPlans.get(0);
+                 travelPlan.setOwner(curUserPlan.getUser());
+                 centralSupport.getTravelPlanRepository().save(travelPlan);
+                 curUserPlan.getUser().getTravelPlans().add(travelPlan);
+                 centralSupport.getUserRepository().save(curUserPlan.getUser());
             }
-        } else {
-            centralSupport.getUserPlanRolesRepository().deleteByTravelPlanAndUser(travelPlan, user);
         }
-
+        centralSupport.getUserPlanRepository().deleteByTravelPlanAndUser(travelPlan, user);
     }
 
     @Transactional
@@ -138,10 +124,15 @@ public class TravelPlanServiceImpl implements TravelPlanService{
 
     @Transactional
     @Override
-    public String generateNewInviteLink(Long travelPlanId) {
+    public String generateNewInviteLink(Long travelPlanId, UUID userId) {
         String newInviteLink = CommonUtils.generateJoinLink();
-        centralSupport.getTravelPlanRepository().updateJoinCodeTravelPlan(travelPlanId, newInviteLink);
-        return newInviteLink;
+        if(centralSupport.getTravelPlanRepository().getReferenceById(travelPlanId).getOwner().getId() == userId){
+            centralSupport.getTravelPlanRepository().updateJoinCodeTravelPlan(travelPlanId, newInviteLink);
+            return newInviteLink;
+        } else {
+            throw new NoPermissionException();
+        }
+
     }
 
 }

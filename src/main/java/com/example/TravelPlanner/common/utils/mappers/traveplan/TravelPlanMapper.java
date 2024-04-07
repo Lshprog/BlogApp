@@ -24,6 +24,7 @@ public class TravelPlanMapper {
         TravelPlanDTO travelPlanDTO = centralSupport.getMapperUtil().map(travelPlan, TravelPlanDTO.class);
         travelPlanDTO.setEvents(centralSupport.getMapperUtil().mapList(travelPlan.getEvents(), eventMapper::mapEventToEventDTO));
         travelPlanDTO.setCreator(travelPlan.getOwner().getUsername());
+        travelPlanDTO.setUsers(centralSupport.getUserPlanRepository().findUsersByTravelPlan(travelPlan.getId()));
         return travelPlanDTO;
     }
 

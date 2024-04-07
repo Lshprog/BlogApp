@@ -18,6 +18,6 @@ public interface VotesRepository extends JpaRepository<Vote, Long> {
     @Query("SELECT CASE WHEN COUNT(v) > 0 THEN true ELSE false END FROM Vote v WHERE" +
             " v.creator.id = :creatorId AND" +
             " v.voting.id = :votingId")
-    boolean existsByCreatorIdAAndVotingId(@Param("creatorId") UUID creatorId, @Param("votingId") Long votingId);
+    boolean existsByCreatorIdAndVotingId(@Param("creatorId") UUID creatorId, @Param("votingId") Long votingId);
 
 }

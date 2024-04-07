@@ -28,4 +28,6 @@ public class TravelPlanDTO implements Serializable {
     private List<EventDTO> events;
 
     private String joinCode;
+
+    private List<String> users;
 }

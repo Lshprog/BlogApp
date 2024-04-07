@@ -1,7 +1,6 @@
 package com.example.TravelPlanner.travelplanning.dto.event;
 
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
-import com.example.TravelPlanner.travelplanning.common.pojos.Location;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -32,5 +31,5 @@ public class EventDTO implements Serializable {
     @NotNull
     private PlaceStatus placeStatus;
     @NotNull
-    private Location loc;
+    private String location;
 }

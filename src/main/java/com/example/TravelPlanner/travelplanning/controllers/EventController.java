@@ -52,8 +52,9 @@ public class EventController {
 
     // Delete event
     @DeleteMapping("/{eventId}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
-        eventService.deleteEvent(eventId);
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId,
+                                            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        eventService.deleteEvent(eventId, customUserDetails.getId());
         return ResponseEntity.ok().build();
     }
 }

@@ -1,7 +1,6 @@
 package com.example.TravelPlanner.travelplanning.controllers;
 
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
-import com.example.TravelPlanner.common.utils.annotations.ValidTravelPlanId;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanDTO;
 import com.example.TravelPlanner.travelplanning.dto.travelplan.TravelPlanPreviewDTO;
@@ -44,8 +43,9 @@ public class TravelPlanController {
     }
 
     @PostMapping("/{travelPlanId}/joinlink")
-    public ResponseEntity<String> generateJoinLink(@PathVariable Long travelPlanId) {
-        return ResponseEntity.ok().body(travelPlanService.generateNewInviteLink(travelPlanId));
+    public ResponseEntity<String> generateJoinLink(@PathVariable Long travelPlanId,
+                                                   @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.ok().body(travelPlanService.generateNewInviteLink(travelPlanId, customUserDetails.getId()));
     }
 
     @PostMapping("/join/{joinLink}")

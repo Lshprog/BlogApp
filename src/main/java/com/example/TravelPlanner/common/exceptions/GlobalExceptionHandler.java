@@ -1,9 +1,6 @@
 package com.example.TravelPlanner.common.exceptions;
 
-import com.example.TravelPlanner.common.exceptions.custom.AlreadyVotedException;
-import com.example.TravelPlanner.common.exceptions.custom.BadRequest;
-import com.example.TravelPlanner.common.exceptions.custom.CustomAuthException;
-import com.example.TravelPlanner.common.exceptions.custom.OverlappingEventsException;
+import com.example.TravelPlanner.common.exceptions.custom.*;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EntityNotFoundException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
@@ -28,7 +25,7 @@ public class GlobalExceptionHandler {
         return buildSimpleResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({AlreadyVotedException.class, OverlappingEventsException.class, JwtException.class, BadRequest.class})
+    @ExceptionHandler({AlreadyVotedException.class, OverlappingEventsException.class, JwtException.class, BadRequest.class, ExpiredVotingException.class})
     public ResponseEntity<Object> handleBadRequest(RuntimeException ex) {
         return buildSimpleResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
