@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @Component
@@ -57,4 +59,14 @@ public class MapperUtil {
         }
         return targetList;
     }
+
+    public <S, T> List<T> mapListWithUser(List<S> sourceList, BiFunction<S, UUID, T> mapFunction, UUID userId) {
+        List<T> targetList = new ArrayList<>();
+        for (S sourceItem : sourceList) {
+            T mappedItem = mapFunction.apply(sourceItem, userId);
+            targetList.add(mappedItem);
+        }
+        return targetList;
+    }
+
 }

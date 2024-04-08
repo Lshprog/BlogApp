@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -20,21 +21,26 @@ public class VotingMapper {
     private final EventMapper eventMapper;
     private final VoteMapper voteMapper;
 
-    public VotingDTO mapVotingToVotingDto(Voting voting) {
+    public VotingDTO mapVotingToVotingDto(Voting voting, UUID userId) {
         VotingDTO votingDTO = centralSupport.getMapperUtil().map(voting, VotingDTO.class);
         votingDTO.setCreator(voting.getCreator().getUsername());
         List<VoteDTO> votes = centralSupport.getMapperUtil().mapList(voting.getVotes(), voteMapper::mapVoteToVoteDto);
         Integer likes = 0;
         Integer dislikes = 0;
+        String username = centralSupport.getUserRepository().getReferenceById(userId).getUsername();
+        boolean isVoted = false;
         for(VoteDTO vote : votes){
             if(vote.getIsLiked()) likes++;
             else dislikes++;
+            if(Objects.equals(vote.getCreator(), username)) isVoted = true;
         }
         votingDTO.setLikes(likes);
         votingDTO.setDislikes(dislikes);
         votingDTO.setEvent(eventMapper.mapEventToEventDTO(voting.getEvent()));
+        votingDTO.setIsVoted(isVoted);
         return votingDTO;
     }
+
 
     public VotingPreviewDTO mapVotingToVotingPreviewDto(Voting voting) {
         VotingPreviewDTO votingDTO = centralSupport.getMapperUtil().map(voting, VotingPreviewDTO.class);

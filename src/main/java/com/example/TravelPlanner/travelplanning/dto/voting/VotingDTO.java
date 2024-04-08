@@ -3,6 +3,7 @@ package com.example.TravelPlanner.travelplanning.dto.voting;
 import com.example.TravelPlanner.travelplanning.dto.event.EventDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,5 +28,7 @@ public class VotingDTO implements Serializable {
 
     private Integer likes;
     private Integer dislikes;
+    @NotNull
+    private Boolean isVoted = false;
 
 }

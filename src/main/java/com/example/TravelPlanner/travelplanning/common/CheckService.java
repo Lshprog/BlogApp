@@ -93,10 +93,4 @@ public class CheckService {
         centralSupport.getEventRepository().save(event);
 
     }
-
-
-//    public Object checkEntityExistenceById(Class<T> checkClass, Long id) {
-//        Optional<T> optionalT = centralSupport.get
-//    }
-
 }

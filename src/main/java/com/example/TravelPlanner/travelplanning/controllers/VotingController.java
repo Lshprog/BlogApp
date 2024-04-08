@@ -21,13 +21,15 @@ public class VotingController {
 
     private final VotingService votingService;
     @GetMapping("/{votingId}")
-    public ResponseEntity<VotingDTO> getVotingById(@PathVariable Long votingId) {
-        return ResponseEntity.ok().body(votingService.getVotingById(votingId));
+    public ResponseEntity<VotingDTO> getVotingById(@PathVariable Long votingId,
+                                                   @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.ok().body(votingService.getVotingById(votingId, customUserDetails.getId()));
     }
 
     @GetMapping
-    public ResponseEntity<List<VotingPreviewDTO>> getVotings(@PathVariable Long travelPlanId) {
-        return ResponseEntity.ok().body(votingService.getVotingsByTravelPlan(travelPlanId));
+    public ResponseEntity<List<VotingDTO>> getVotings(@PathVariable Long travelPlanId,
+                                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.ok().body(votingService.getVotingsByTravelPlan(travelPlanId, customUserDetails.getId()));
     }
 
     @PostMapping

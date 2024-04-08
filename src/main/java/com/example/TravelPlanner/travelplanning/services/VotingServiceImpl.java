@@ -1,8 +1,6 @@
 package com.example.TravelPlanner.travelplanning.services;
 
 import com.example.TravelPlanner.common.exceptions.custom.OverlappingEventsException;
-import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EventNotFoundException;
-import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.VotingNotFoundException;
 import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.voting.VoteMapper;
 import com.example.TravelPlanner.common.utils.mappers.voting.VotingMapper;
@@ -19,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -36,8 +32,8 @@ public class VotingServiceImpl implements VotingService{
     private final DynamicSchedulingService dynamicSchedulingService;
 
     @Override
-    public VotingDTO getVotingById(Long votingId) {
-        return votingMapper.mapVotingToVotingDto(checkService.checkVotingExistence(votingId));
+    public VotingDTO getVotingById(Long votingId, UUID userId) {
+        return votingMapper.mapVotingToVotingDto(checkService.checkVotingExistence(votingId), userId);
     }
 
     @Override
@@ -73,7 +69,7 @@ public class VotingServiceImpl implements VotingService{
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
         }
-        return votingMapper.mapVotingToVotingDto(voting);
+        return votingMapper.mapVotingToVotingDto(voting, userId);
     }
 
     @Override
@@ -83,9 +79,8 @@ public class VotingServiceImpl implements VotingService{
         if (checkService.checkFinishedVoting(votingId)) centralSupport.getVotesRepository().save(voteMapper.mapVoteCreateDTOToVote(voteCreateDTO, votingId, userId));
     }
 
-    @Override
-    public List<VotingPreviewDTO> getVotingsByTravelPlan(Long travelPlanId) {
-        return centralSupport.getMapperUtil().mapList(centralSupport.getVotingRepository().findVotingsByTravelPlanId(travelPlanId), votingMapper::mapVotingToVotingPreviewDto);
+    public List getVotingsByTravelPlan(Long travelPlanId, UUID userId) {
+        return centralSupport.getMapperUtil().mapListWithUser(centralSupport.getVotingRepository().findVotingsByTravelPlanId(travelPlanId), votingMapper::mapVotingToVotingDto, userId);
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface VotingService {
 
-    VotingDTO getVotingById(Long votingId);
+    VotingDTO getVotingById(Long votingId, UUID userId);
 
     void deleteVoting(Long votingId);
 
@@ -15,7 +15,7 @@ public interface VotingService {
 
     void makeVote(VoteCreateDTO voteCreateDTO, Long votingId, UUID userId);
 
-    List<VotingPreviewDTO> getVotingsByTravelPlan(Long travelPlanId);
+    List<VotingDTO> getVotingsByTravelPlan(Long travelPlanId, UUID userId);
 
     void deleteFinishedVotings(Long travelPlanId);
 
