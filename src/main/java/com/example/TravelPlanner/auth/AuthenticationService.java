@@ -5,9 +5,11 @@ import com.example.TravelPlanner.auth.config.JwtService;
 import com.example.TravelPlanner.auth.entities.CustomUserDetails;
 import com.example.TravelPlanner.auth.entities.Role;
 import com.example.TravelPlanner.auth.entities.User;
+import com.example.TravelPlanner.common.exceptions.custom.BadRequest;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.UserNotFoundException;
 import com.example.TravelPlanner.common.utils.mappers.MapperUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +29,16 @@ public class AuthenticationService {
     private final MapperUtil mapperUtil;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        boolean usernameExists = userRepository.existsByUsername(request.getUsername());
+        if (usernameExists) {
+            throw new BadRequest("Username already taken.");
+        }
+
+        boolean emailExists = userRepository.existsByEmail(request.getEmail());
+        if (emailExists) {
+            throw new BadRequest("Email already taken.");
+        }
+
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())

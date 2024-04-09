@@ -1,7 +1,6 @@
 package com.example.TravelPlanner.travelplanning.dto.event;
 
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
-import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,12 +9,10 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-// To show every even on the front page for every travel plan
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventDTO implements Serializable {
+public class EventUpdateDTO implements Serializable {
     @NotNull
     private Long id;
     @NotNull

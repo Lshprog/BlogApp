@@ -67,17 +67,16 @@ public class EventServiceImpl implements EventService{
     public void updateEvent(EventDTO eventDTO, Long travelPlanId, UUID userId) {
         Event event = checkService.checkEventExistence(eventDTO.getId());
         if(event.getPlaceStatus() == PlaceStatus.VOTING){
-            throw new RuntimeException();
+            throw new BadRequest("Event is voted, cannot update!");
         }
-        if(event.getCreator().getId() == userId || event.getTravelPlan().getOwner().getId() == userId){
-            if(eventDTO.getPlaceStatus() == PlaceStatus.CONCRETE &&
-                    (event.getPlaceStatus() == PlaceStatus.SUGGESTED)) {
+        if(event.getCreator().getId().equals(userId) || event.getTravelPlan().getOwner().getId().equals(userId)){
+            if(eventDTO.getPlaceStatus() == PlaceStatus.CONCRETE) {
                 centralSupport.getEventRepository().updateEventStatusByTravelPlanAndTime(
                         travelPlanId,
                         PlaceStatus.CONCRETE,
-                        event.getPlaceStatus(),
-                        event.getStartTime(),
-                        event.getEndTime()
+                        PlaceStatus.SUGGESTED,
+                        eventDTO.getStartTime(),
+                        eventDTO.getEndTime()
                 );
                 event.setPlaceStatus(PlaceStatus.CONCRETE);
             } else {
@@ -89,6 +88,8 @@ public class EventServiceImpl implements EventService{
             event.setStartTime(eventDTO.getStartTime());
             event.setEndTime(eventDTO.getEndTime());
             centralSupport.getEventRepository().save(event);
+        } else {
+            throw new NoPermissionException();
         }
 
     }
@@ -97,10 +98,13 @@ public class EventServiceImpl implements EventService{
     @Transactional
     public void deleteEvent(Long eventId, UUID userId) {
         Event event = checkService.checkEventExistence(eventId);
-        if (event.getCreator().getId() == userId || event.getTravelPlan().getOwner().getId() == userId) {
+        if(event.getPlaceStatus() == PlaceStatus.VOTING){
+            throw new BadRequest("Event is voted, cannot delete!");
+        }
+        if (event.getCreator().getId().equals(userId) || event.getTravelPlan().getOwner().getId().equals(userId)) {
             centralSupport.getEventRepository().deleteById(eventId);
         } else {
-            throw new NoPermissionException("Not permitted to perform event deletion!");
+            throw new NoPermissionException("Not permitted to perform this operation!");
         }
     }
 

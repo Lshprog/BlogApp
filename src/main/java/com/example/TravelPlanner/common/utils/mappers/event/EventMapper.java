@@ -20,14 +20,14 @@ public class EventMapper{
 
     public EventDTO mapEventToEventDTO(Event event) {
         EventDTO eventDTO = centralSupport.getMapperUtil().map(event, EventDTO.class);
-        eventDTO.setCreator(event.getCreator().getUsername());
+        //eventDTO.setCreator(event.getCreator().getUsername());
         return eventDTO;
     }
 
     public Event mapEventDTOToEvent(EventDTO eventDTO, Long travelPlanId) {
         Event event = centralSupport.getMapperUtil().map(eventDTO, Event.class);
-        event.setCreator(centralSupport.getUserRepository().findByUsername(eventDTO.getCreator())
-                .orElseThrow(() -> new UserNotFoundException(eventDTO.getCreator())));
+        //event.setCreator(centralSupport.getUserRepository().findByUsername(eventDTO.getCreator())
+        //        .orElseThrow(() -> new UserNotFoundException(eventDTO.getCreator())));
         event.setTravelPlan(centralSupport.getTravelPlanRepository().getReferenceById(travelPlanId));
         return event;
     }
