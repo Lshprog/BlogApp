@@ -39,7 +39,7 @@ public class Voting implements Serializable {
     @JoinColumn(name = "event_id", referencedColumnName = "id")
     private Event event;
 
-    @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Builder.Default
     private List<Vote> votes = new ArrayList<>();
 

@@ -5,7 +5,6 @@ import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.voting.VoteMapper;
 import com.example.TravelPlanner.common.utils.mappers.voting.VotingMapper;
 import com.example.TravelPlanner.travelplanning.common.CheckService;
-import com.example.TravelPlanner.travelplanning.common.DynamicSchedulingService;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import com.example.TravelPlanner.travelplanning.dto.voting.*;
 import com.example.TravelPlanner.travelplanning.entities.Event;
@@ -37,6 +36,7 @@ public class VotingServiceImpl implements VotingService{
     }
 
     @Override
+    @Transactional
     public void deleteVoting(Long votingId) {
         Voting voting = checkService.checkVotingExistence(votingId);
         voting.getEvent().setPlaceStatus(PlaceStatus.SUGGESTED);
@@ -84,6 +84,7 @@ public class VotingServiceImpl implements VotingService{
     }
 
     @Override
+    @Transactional
     public void deleteFinishedVotings(Long travelPlanId) {
         centralSupport.getVotingRepository().deleteFinishedVotings(travelPlanId);
     }

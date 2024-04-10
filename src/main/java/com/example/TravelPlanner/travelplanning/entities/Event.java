@@ -48,4 +48,9 @@ public class Event implements Serializable {
     @Column(name = "location")
     private String location;
 
+    @Column(name = "min_cost")
+    private Integer minCost;
+    @Column(name = "max_cost")
+    private Integer maxCost;
+
 }

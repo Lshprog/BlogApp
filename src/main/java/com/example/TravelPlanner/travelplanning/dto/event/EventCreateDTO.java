@@ -30,4 +30,7 @@ public class EventCreateDTO implements Serializable {
 
     @NotNull
     private String location;
+
+    private Integer minCost;
+    private Integer maxCost;
 }

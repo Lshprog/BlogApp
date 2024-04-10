@@ -1,4 +1,4 @@
-package com.example.TravelPlanner.common.config;
+package com.example.TravelPlanner.common.filters;
 
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EntityNotFoundException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.TravelPlanNotFoundException;

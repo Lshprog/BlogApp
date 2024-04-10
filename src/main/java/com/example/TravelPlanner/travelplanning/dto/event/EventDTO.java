@@ -30,4 +30,7 @@ public class EventDTO implements Serializable {
     private PlaceStatus placeStatus;
     @NotNull
     private String location;
+
+    private Integer minCost;
+    private Integer maxCost;
 }

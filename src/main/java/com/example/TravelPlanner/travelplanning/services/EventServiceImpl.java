@@ -87,6 +87,8 @@ public class EventServiceImpl implements EventService{
             event.setDescription(eventDTO.getDescription());
             event.setStartTime(eventDTO.getStartTime());
             event.setEndTime(eventDTO.getEndTime());
+            event.setMaxCost(eventDTO.getMaxCost());
+            event.setMinCost(eventDTO.getMinCost());
             centralSupport.getEventRepository().save(event);
         } else {
             throw new NoPermissionException();

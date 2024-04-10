@@ -12,14 +12,18 @@ import com.example.TravelPlanner.travelplanning.entities.TravelPlan;
 import com.example.TravelPlanner.travelplanning.entities.Vote;
 import com.example.TravelPlanner.travelplanning.entities.Voting;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Service
 @RequiredArgsConstructor
+@Slf4j
 public class CheckService {
 
     private final CentralSupport centralSupport;
@@ -68,17 +72,20 @@ public class CheckService {
         return true;
     }
 
+    @Transactional
     public void checkVotingResults(Long votingId) {
+
+        log.info("In checkVotingResults");
+
         Voting voting = centralSupport.getVotingRepository().findById(votingId).get();
+        int nofuser = centralSupport.getUserPlanRepository().findUsersByTravelPlan(voting.getEvent().getTravelPlan().getId()).size();
         List<Vote> votes = voting.getVotes();
-        Integer likes = 0;
-        Integer dislikes = 0;
+        int likes = 0;
         for(Vote vote : votes){
             if(vote.getIsLiked()) likes++;
-            else dislikes++;
         }
         Event event = voting.getEvent();
-        if((double) likes / (likes + dislikes) < 0.8) {
+        if((double) likes / nofuser < 0.8) {
             event.setPlaceStatus(PlaceStatus.SUGGESTED);
         } else {
             centralSupport.getEventRepository().updateEventStatusByTravelPlanAndTime(
