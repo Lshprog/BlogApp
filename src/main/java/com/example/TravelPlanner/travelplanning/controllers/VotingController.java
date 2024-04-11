@@ -32,10 +32,10 @@ public class VotingController {
         return ResponseEntity.ok().body(votingService.getVotingsByTravelPlan(travelPlanId, customUserDetails.getId()));
     }
 
-    @PostMapping
-    public ResponseEntity<VotingDTO> createVoting(@RequestBody VotingCreateDTO votingDTO,
+    @PostMapping("/{eventId}")
+    public ResponseEntity<VotingDTO> createVoting(@PathVariable Long eventId,
                                                   @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return ResponseEntity.ok().body(votingService.createNewVoting(votingDTO, customUserDetails.getId()));
+        return ResponseEntity.ok().body(votingService.createNewVoting(eventId, customUserDetails.getId()));
     }
 
     // Update voting

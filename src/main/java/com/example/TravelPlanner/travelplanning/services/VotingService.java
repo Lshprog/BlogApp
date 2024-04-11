@@ -11,7 +11,7 @@ public interface VotingService {
 
     void deleteVoting(Long votingId);
 
-    VotingDTO createNewVoting(VotingCreateDTO votingDTO, UUID userId);
+    VotingDTO createNewVoting(Long votingId, UUID userId);
 
     void makeVote(VoteCreateDTO voteCreateDTO, Long votingId, UUID userId);
 

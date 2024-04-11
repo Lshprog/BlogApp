@@ -16,10 +16,15 @@ import java.util.List;
 @Entity
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Table(name = "votings")
 public class Voting implements Serializable {
+
+    public Voting(){
+        this.startTime = LocalDateTime.now();
+        this.endTime = LocalDateTime.now().plusDays(2);
+        this.votes = new ArrayList<>();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

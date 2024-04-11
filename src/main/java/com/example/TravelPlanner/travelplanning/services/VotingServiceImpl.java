@@ -46,8 +46,8 @@ public class VotingServiceImpl implements VotingService{
 
     @Override
     @Transactional
-    public VotingDTO createNewVoting(VotingCreateDTO votingCreateDTO, UUID userId) {
-        Event event = checkService.checkEventExistence(votingCreateDTO.getEventId());
+    public VotingDTO createNewVoting(Long eventId, UUID userId) {
+        Event event = checkService.checkEventExistence(eventId);
         if (event.getPlaceStatus() != PlaceStatus.SUGGESTED) {
             return null;
         }
@@ -60,7 +60,10 @@ public class VotingServiceImpl implements VotingService{
         if (!overlappingEvents.isEmpty()){
             throw new OverlappingEventsException();
         }
-        Voting voting = votingMapper.mapVotingCreateDTOtoVoting(votingCreateDTO,userId);
+
+        Voting voting = new Voting();
+        voting.setEvent(event);
+        voting.setCreator(centralSupport.getUserRepository().getReferenceById(userId));
         try {
             voting = centralSupport.getVotingRepository().save(voting);
             event.setPlaceStatus(PlaceStatus.VOTING);

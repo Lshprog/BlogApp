@@ -3,7 +3,6 @@ package com.example.TravelPlanner.common.utils.mappers.voting;
 import com.example.TravelPlanner.common.utils.CentralSupport;
 import com.example.TravelPlanner.common.utils.mappers.event.EventMapper;
 import com.example.TravelPlanner.travelplanning.dto.voting.VoteDTO;
-import com.example.TravelPlanner.travelplanning.dto.voting.VotingCreateDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingDTO;
 import com.example.TravelPlanner.travelplanning.dto.voting.VotingPreviewDTO;
 import com.example.TravelPlanner.travelplanning.entities.Voting;
@@ -47,13 +46,6 @@ public class VotingMapper {
         votingDTO.setCreator(voting.getCreator().getUsername());
         votingDTO.setEventTitle(voting.getEvent().getTitle());
         return votingDTO;
-    }
-
-    public Voting mapVotingCreateDTOtoVoting(VotingCreateDTO votingCreateDTO, UUID userId) {
-        Voting voting = centralSupport.getMapperUtil().map(votingCreateDTO, Voting.class);
-        voting.setCreator(centralSupport.getUserRepository().getReferenceById(userId));
-        voting.setEvent(centralSupport.getEventRepository().getReferenceById(votingCreateDTO.getEventId()));
-        return voting;
     }
 
 }
