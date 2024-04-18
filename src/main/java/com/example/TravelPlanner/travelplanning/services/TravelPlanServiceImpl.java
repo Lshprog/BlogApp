@@ -38,7 +38,7 @@ public class TravelPlanServiceImpl implements TravelPlanService{
         if(optionalUser.isEmpty()){
             throw new UserNotFoundException(userId);
         }
-        return centralSupport.getMapperUtil().mapList(optionalUser.get().getTravelPlans(), TravelPlanPreviewDTO.class);
+        return centralSupport.getMapperUtil().mapList(centralSupport.getUserPlanRepository().findTravelPlansByUserId(userId), TravelPlanPreviewDTO.class);
     }
 
     @Override
@@ -61,7 +61,8 @@ public class TravelPlanServiceImpl implements TravelPlanService{
                     .travelPlan(travelPlan)
                     .user(user)
                     .build();
-            centralSupport.getUserPlanRepository().save(userPlan);
+            userPlan = centralSupport.getUserPlanRepository().save(userPlan);
+            travelPlan.getUserPlans().add(userPlan);
         }
         return travelPlanMapper.mapTravelPlanToTravelPlanDTO(travelPlan);
     }
@@ -98,7 +99,6 @@ public class TravelPlanServiceImpl implements TravelPlanService{
             List<UserPlan> userPlans = centralSupport.getUserPlanRepository().findUserPlansByTravelPlan(travelPlanId);
             if(userPlans.size() < 2){
                 centralSupport.getTravelPlanRepository().delete(travelPlan);
-                // maybe return here
             } else {
                  UserPlan curUserPlan = userPlans.get(1);
                  if(Objects.equals(curUserPlan.getUser().getUsername(), user.getUsername())) curUserPlan = userPlans.get(0);

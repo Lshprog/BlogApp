@@ -1,5 +1,6 @@
 package com.example.TravelPlanner.common.filters;
 
+import com.example.TravelPlanner.common.exceptions.custom.UserNotPartOfTravelPlanException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.EntityNotFoundException;
 import com.example.TravelPlanner.common.exceptions.custom.entitynotfound.TravelPlanNotFoundException;
 import com.example.TravelPlanner.common.utils.CentralSupport;
@@ -34,8 +35,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
             writeResponse(response, "INVALID JWT", HttpStatus.BAD_REQUEST);
-        } catch (TravelPlanNotFoundException e) {
-            writeResponse(response, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (TravelPlanNotFoundException | UserNotPartOfTravelPlanException e) {
+            writeResponse(response, e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
             writeResponse(response, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

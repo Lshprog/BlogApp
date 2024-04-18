@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.apache.commons.lang3.builder.HashCodeExclude;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -15,7 +16,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Data
+@Setter
+@Getter
+@ToString
 @Entity
 @Builder
 @AllArgsConstructor

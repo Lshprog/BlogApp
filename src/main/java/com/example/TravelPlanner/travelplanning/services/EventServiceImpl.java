@@ -19,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -108,6 +111,22 @@ public class EventServiceImpl implements EventService{
         } else {
             throw new NoPermissionException("Not permitted to perform this operation!");
         }
+    }
+
+    @Override
+    public List<EventDTO> getEventsByDay(String placeStatus, Long travelPlanId, LocalDate day) {
+        LocalDateTime startOfTheDay = day.atStartOfDay();
+        LocalDateTime endOfTheDay = LocalDateTime.of(day, LocalTime.MAX);
+        return centralSupport.getMapperUtil().mapList(
+                centralSupport.getEventRepository().findEventsByTravelPlanIdAndPlaceStatusAndDay(travelPlanId, PlaceStatus.valueOf(placeStatus), startOfTheDay, endOfTheDay),
+                eventMapper::mapEventToEventDTO);
+    }
+
+    @Override
+    public List<EventDTO> getEvents(String placeStatus, Long travelPlanId) {
+        return centralSupport.getMapperUtil().mapList(
+                centralSupport.getEventRepository().findEventsByTravelPlanIdAndPlaceStatus(travelPlanId, PlaceStatus.valueOf(placeStatus)),
+                eventMapper::mapEventToEventDTO);
     }
 
 }

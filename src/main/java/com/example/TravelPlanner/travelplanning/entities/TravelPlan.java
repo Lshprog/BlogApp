@@ -9,8 +9,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Setter
+@Getter
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

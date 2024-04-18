@@ -13,6 +13,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/v1/travelplans/{travelPlanId}/events")
@@ -27,11 +30,28 @@ public class EventController {
     public ResponseEntity<EventDTO> getEventById(@PathVariable Long eventId) {
         return ResponseEntity.ok().body(eventService.getEventById(eventId));
     }
-//    @GetMapping
-//    public ResponseEntity<List<EventDTO>> getEvents(@PathVariable Long travelPlanId) {
-//        // Implementation
-//        return ResponseEntity.ok().body(travellingService.get());
-//    }
+
+    @GetMapping("/concrete")
+    public ResponseEntity<List<EventDTO>> getConcreteEvents(@PathVariable Long travelPlanId) {
+        return ResponseEntity.ok().body(eventService.getEvents("CONCRETE", travelPlanId));
+    }
+
+    @GetMapping("/suggested")
+    public ResponseEntity<List<EventDTO>> getSuggestedEvents(@PathVariable Long travelPlanId) {
+        return ResponseEntity.ok().body(eventService.getEvents("SUGGESTED", travelPlanId));
+    }
+
+    @GetMapping("/concrete/{day}")
+    public ResponseEntity<List<EventDTO>> getConcreteEventsByDay(@PathVariable Long travelPlanId,
+                                                                 @PathVariable LocalDate day) {
+        return ResponseEntity.ok().body(eventService.getEventsByDay("CONCRETE", travelPlanId, day));
+    }
+
+    @GetMapping("/suggested/{day}")
+    public ResponseEntity<List<EventDTO>> getSuggestedEventsByDay(@PathVariable Long travelPlanId,
+                                                                  @PathVariable LocalDate day) {
+        return ResponseEntity.ok().body(eventService.getEventsByDay("SUGGESTED", travelPlanId, day));
+    }
 
     @PostMapping
     public ResponseEntity<EventDTO> createEvent(@PathVariable Long travelPlanId,

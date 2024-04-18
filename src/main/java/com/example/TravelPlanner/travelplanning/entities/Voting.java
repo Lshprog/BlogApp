@@ -3,10 +3,7 @@ package com.example.TravelPlanner.travelplanning.entities;
 import com.example.TravelPlanner.auth.entities.User;
 import com.example.TravelPlanner.travelplanning.common.enums.PlaceStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @Builder
 @Table(name = "votings")

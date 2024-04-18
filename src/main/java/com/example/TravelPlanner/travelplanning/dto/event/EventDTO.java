@@ -21,6 +21,8 @@ public class EventDTO implements Serializable {
     @NotNull
     private String title;
     @NotNull
+    private String creator;
+    @NotNull
     private LocalDateTime startTime;
     @NotNull
     private LocalDateTime endTime;

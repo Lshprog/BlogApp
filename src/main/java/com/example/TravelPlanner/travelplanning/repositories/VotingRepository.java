@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface VotingRepository extends JpaRepository<Voting, Long> {
 
-    @Query("SELECT vtg FROM Voting vtg WHERE vtg.event.travelPlan.id = :travelPlanId")
+    @Query("SELECT vtg FROM Voting vtg WHERE vtg.event.travelPlan.id = :travelPlanId ORDER BY vtg.startTime")
     List<Voting> findVotingsByTravelPlanId(Long travelPlanId);
 
     @Modifying
