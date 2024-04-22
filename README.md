@@ -20,17 +20,20 @@ travelplanning - business logic for our api. here you can find models used for d
 
 ----------------------------------------------------------------------------------
 
-Patterns used:
+#Patterns used:
 
 Chain of responsibility : used in common/filters Custom filters which call next filter in filterChain through doFilter()
+
 Singleton : all Spring beans https://www.baeldung.com/spring-bean
+
 Builder : using Lombok builder annotation for DTO (data transfer objects)
 
-OOP principles:
+#OOP principles:
+
 Polymorphism : using interfaces
 
 Inheritance
 
-Solid principles:
+#Solid principles:
 
 Single Responsibility Principle
